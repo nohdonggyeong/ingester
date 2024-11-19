@@ -1,0 +1,11 @@
+# java -jar your-application.jar --spring.profiles.active=prod
+spring:
+  datasource:
+    url: jdbc:postgresql://localhost:5432/central_storage
+    driver-class-name: org.postgresql.Driver
+    username: myuser
+    password: mypassword
+  jpa:
+    database-platform: org.hibernate.dialect.PostgreSQLDialect
+    hibernate:
+      ddl-auto: update
