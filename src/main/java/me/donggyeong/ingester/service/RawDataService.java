@@ -7,5 +7,5 @@ import me.donggyeong.ingester.dto.RawDataResponse;
 
 public interface RawDataService {
 	RawDataResponse createRawData(RawDataRequest rawDataRequest);
-	List<RawDataResponse> getRawDataCandidateList();
+	List<RawDataResponse> getRawDataAfterOffset();
 }

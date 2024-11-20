@@ -28,8 +28,8 @@ public class RawDataController {
 	}
 
 	@GetMapping
-	public ResponseEntity<List<RawDataResponse>> getRawDataCandidateList() {
-		List<RawDataResponse> rawDataResponseList = rawDataServiceImpl.getRawDataCandidateList();
+	public ResponseEntity<List<RawDataResponse>> getRawDataAfterOffset() {
+		List<RawDataResponse> rawDataResponseList = rawDataServiceImpl.getRawDataAfterOffset();
 		return ResponseEntity.status(HttpStatus.OK).body(rawDataResponseList);
 	}
 }

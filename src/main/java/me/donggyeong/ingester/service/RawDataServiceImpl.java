@@ -26,8 +26,10 @@ public class RawDataServiceImpl implements RawDataService {
 	}
 
 	@Override
-	public List<RawDataResponse> getRawDataCandidateList() {
-		return rawDataRepository.findByCreatedAtAfterAndIsValidTrue(ZonedDateTime.now().minusMinutes(1)).stream()
+	public List<RawDataResponse> getRawDataAfterOffset() {
+		// TODO: Modify offset to lastBulkRequestedTime
+		return rawDataRepository.findByCreatedAtAfterAndIsValidTrue(ZonedDateTime.now().minusMinutes(1))
+			.stream()
 			.map(RawDataResponse::new)
 			.collect(Collectors.toList());
 	}

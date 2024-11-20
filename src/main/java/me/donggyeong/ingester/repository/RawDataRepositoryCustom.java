@@ -6,5 +6,5 @@ import java.util.List;
 import me.donggyeong.ingester.domain.RawData;
 
 public interface RawDataRepositoryCustom {
-	List<RawData> findByCreatedAtAfterAndIsValidTrue(ZonedDateTime referenceTime);
+	List<RawData> findByCreatedAtAfterAndIsValidTrue(ZonedDateTime offset);
 }

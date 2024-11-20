@@ -18,10 +18,10 @@ public class RawDataRepositoryCustomImpl implements RawDataRepositoryCustom {
 	private final JPAQueryFactory jpaQueryFactory;
 
 	@Override
-	public List<RawData> findByCreatedAtAfterAndIsValidTrue(ZonedDateTime referenceTime) {
+	public List<RawData> findByCreatedAtAfterAndIsValidTrue(ZonedDateTime offset) {
 		return jpaQueryFactory
 			.selectFrom(rawData)
-			.where(rawData.createdAt.gt(referenceTime)
+			.where(rawData.createdAt.gt(offset)
 				.and(rawData.isValid.isTrue())
 			)
 			.fetch();
