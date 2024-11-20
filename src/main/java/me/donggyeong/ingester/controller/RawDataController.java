@@ -13,23 +13,24 @@ import org.springframework.web.bind.annotation.RestController;
 import lombok.RequiredArgsConstructor;
 import me.donggyeong.ingester.dto.RawDataResponse;
 import me.donggyeong.ingester.dto.RawDataRequest;
+import me.donggyeong.ingester.service.RawDataService;
 import me.donggyeong.ingester.service.RawDataServiceImpl;
 
 @RestController
 @RequestMapping("/api/v1/raw-data")
 @RequiredArgsConstructor
 public class RawDataController {
-	private final RawDataServiceImpl rawDataServiceImpl;
+	private final RawDataService rawDataService;
 
 	@PostMapping
 	public ResponseEntity<RawDataResponse> createRawData(@RequestBody RawDataRequest rawDataRequest) {
-		RawDataResponse rawDataResponse = rawDataServiceImpl.createRawData(rawDataRequest);
+		RawDataResponse rawDataResponse = rawDataService.createRawData(rawDataRequest);
 		return ResponseEntity.status(HttpStatus.CREATED).body(rawDataResponse);
 	}
 
 	@GetMapping
 	public ResponseEntity<List<RawDataResponse>> getRawDataAfterOffset() {
-		List<RawDataResponse> rawDataResponseList = rawDataServiceImpl.getRawDataAfterOffset();
+		List<RawDataResponse> rawDataResponseList = rawDataService.getRawDataAfterOffset();
 		return ResponseEntity.status(HttpStatus.OK).body(rawDataResponseList);
 	}
 }
