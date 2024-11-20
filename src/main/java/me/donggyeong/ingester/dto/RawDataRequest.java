@@ -2,6 +2,8 @@ package me.donggyeong.ingester.dto;
 
 import java.util.Map;
 
+import org.springframework.util.ObjectUtils;
+
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -18,7 +20,7 @@ public class RawDataRequest {
 		return RawData.builder()
 			.action(this.action)
 			.document(this.document)
-			.isValid(this.document.containsKey("tenant") && this.document.containsKey("id"))
+			.isValid(!ObjectUtils.isEmpty(this.document) && this.document.containsKey("tenant") && this.document.containsKey("id"))
 			.build();
 	}
 }

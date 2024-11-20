@@ -4,7 +4,7 @@ import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
-import java.util.Arrays;
+import java.util.Collections;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -52,7 +52,7 @@ class RawDataControllerTest {
 
 	@Test
 	void getRawDataAfterOffset() throws Exception {
-		when(rawDataService.getRawDataAfterOffset()).thenReturn(Arrays.asList(mock(RawDataResponse.class)));
+		when(rawDataService.getRawDataAfterOffset()).thenReturn(Collections.singletonList(mock(RawDataResponse.class)));
 
 		mockMvc.perform(
 			get(UriComponentsBuilder.fromPath(API_BASE_PATH).toUriString())
