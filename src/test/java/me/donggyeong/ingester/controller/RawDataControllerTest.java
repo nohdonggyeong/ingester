@@ -31,7 +31,7 @@ class RawDataControllerTest {
 	@Autowired
 	private ObjectMapper objectMapper;
 
-	private static final String API_PREFIX = "/api/v1/raw-data";
+	private static final String API_BASE_PATH = "/api/v1/raw-data";
 	private static final String JSON_ROOT_PATH = "$";
 	private static final String JSON_FIRST_ELEMENT_PATH = "$[0]";
 
@@ -40,7 +40,7 @@ class RawDataControllerTest {
 		when(rawDataService.createRawData(any(RawDataRequest.class))).thenReturn(mock(RawDataResponse.class));
 
 		mockMvc.perform(
-			post(UriComponentsBuilder.fromPath(API_PREFIX).toUriString())
+			post(UriComponentsBuilder.fromPath(API_BASE_PATH).toUriString())
 				.contentType(MediaType.APPLICATION_JSON)
 				.content(objectMapper.writeValueAsString(new RawDataRequest()))
 		)
@@ -55,7 +55,7 @@ class RawDataControllerTest {
 		when(rawDataService.getRawDataAfterOffset()).thenReturn(Arrays.asList(mock(RawDataResponse.class)));
 
 		mockMvc.perform(
-			get(UriComponentsBuilder.fromPath(API_PREFIX).toUriString())
+			get(UriComponentsBuilder.fromPath(API_BASE_PATH).toUriString())
 				.contentType(MediaType.APPLICATION_JSON)
 		)
 			.andExpect(status().isOk())
