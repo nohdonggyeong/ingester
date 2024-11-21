@@ -8,6 +8,8 @@ import org.hibernate.annotations.Type;
 import io.hypersistence.utils.hibernate.type.json.JsonType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -17,6 +19,7 @@ import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import me.donggyeong.ingester.enums.ActionEnum;
 
 @Entity
 @Table(name = "raw_data")
@@ -29,7 +32,8 @@ public class RawData {
 	private Long id;
 
 	@Column(name = "action", nullable = false)
-	private String action;
+	@Enumerated(EnumType.STRING)
+	private ActionEnum action;
 
 	@Column(name = "document", columnDefinition = "json")
 	@Type(JsonType.class)
@@ -49,7 +53,7 @@ public class RawData {
 	}
 
 	@Builder
-	public RawData(String action, Map<String, Object> document, Boolean isValid) {
+	public RawData(ActionEnum action, Map<String, Object> document, Boolean isValid) {
 		this.action = action;
 		this.document = document;
 		this.isValid = isValid;

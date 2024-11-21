@@ -6,11 +6,12 @@ import java.util.Map;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import me.donggyeong.ingester.domain.RawData;
+import me.donggyeong.ingester.enums.ActionEnum;
 
 @AllArgsConstructor
 @Getter
 public class RawDataResponse {
-	private String action;
+	private ActionEnum action;
 	private Map<String, Object> document;
 	private Boolean isValid;
 	private ZonedDateTime createdAt;

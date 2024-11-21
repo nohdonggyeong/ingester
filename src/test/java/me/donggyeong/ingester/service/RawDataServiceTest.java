@@ -15,6 +15,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import me.donggyeong.ingester.domain.RawData;
 import me.donggyeong.ingester.dto.RawDataRequest;
 import me.donggyeong.ingester.dto.RawDataResponse;
+import me.donggyeong.ingester.enums.ActionEnum;
 import me.donggyeong.ingester.repository.RawDataRepository;
 
 @SpringBootTest
@@ -35,21 +36,21 @@ class RawDataServiceTest {
 		Map<String, Object> document = new HashMap<>();
 		document.put("tenant", "test");
 		document.put("id", 1L);
-		RawDataRequest rawDataRequest = new RawDataRequest("CREATE", document);
+		RawDataRequest rawDataRequest = new RawDataRequest(ActionEnum.from("create"), document);
 
 		// when
 		RawDataResponse rawDataResponse = rawDataService.createRawData(rawDataRequest);
 
 		// then
 		assertNotNull(rawDataResponse);
-		assertEquals("CREATE", rawDataResponse.getAction());
+		assertEquals(ActionEnum.from("create"), rawDataResponse.getAction());
 		assertMapEquals(document, rawDataResponse.getDocument());
 		assertTrue(rawDataResponse.getIsValid());
 		assertNotNull(rawDataResponse.getCreatedAt());
 
 		RawData rawData = rawDataRepository.findFirstByOrderByIdDesc();
 		assertNotNull(rawData);
-		assertEquals("CREATE", rawData.getAction());
+		assertEquals(ActionEnum.from("create"), rawData.getAction());
 		assertMapEquals(document, rawData.getDocument());
 		assertTrue(rawData.getIsValid());
 		assertNotNull(rawData.getCreatedAt());
@@ -61,7 +62,7 @@ class RawDataServiceTest {
 		Map<String, Object> document = new LinkedHashMap<>();
 		document.put("tenant", "test");
 		document.put("id", 1L);
-		RawDataRequest rawDataRequest = new RawDataRequest("CREATE", document);
+		RawDataRequest rawDataRequest = new RawDataRequest(ActionEnum.from("create"), document);
 		rawDataService.createRawData(rawDataRequest);
 
 		// when
@@ -73,7 +74,7 @@ class RawDataServiceTest {
 		assertEquals(1, rawDataResponseList.size());
 
 		RawDataResponse rawDataResponse = rawDataResponseList.getFirst();
-		assertEquals("CREATE", rawDataResponse.getAction());
+		assertEquals(ActionEnum.from("create"), rawDataResponse.getAction());
 		assertEquals("test", rawDataResponse.getDocument().get("tenant"));
 		assertEquals(1L, ((Number) rawDataResponse.getDocument().get("id")).longValue());
 	}

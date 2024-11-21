@@ -8,12 +8,13 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import me.donggyeong.ingester.domain.RawData;
+import me.donggyeong.ingester.enums.ActionEnum;
 
 @NoArgsConstructor
 @AllArgsConstructor
 @Getter
 public class RawDataRequest {
-	private String action;
+	private ActionEnum action;
 	private Map<String, Object> document;
 
 	public RawData toEntity() {

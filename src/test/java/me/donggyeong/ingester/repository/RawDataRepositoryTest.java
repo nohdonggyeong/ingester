@@ -2,6 +2,8 @@ package me.donggyeong.ingester.repository;
 
 import me.donggyeong.ingester.config.QuerydslConfiguration;
 import me.donggyeong.ingester.domain.RawData;
+import me.donggyeong.ingester.enums.ActionEnum;
+
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
@@ -31,9 +33,8 @@ public class RawDataRepositoryTest {
 		Map<String, Object> document = new HashMap<>();
 		document.put("key1", "value1");
 		document.put("key2", 123);
-
 		RawData rawData = RawData.builder()
-			.action("CREATE")
+			.action(ActionEnum.from("create"))
 			.document(document)
 			.isValid(true)
 			.build();
@@ -44,7 +45,7 @@ public class RawDataRepositoryTest {
 		// then
 		assertThat(savedRawData).isNotNull();
 		assertThat(savedRawData.getId()).isNotNull();
-		assertThat(savedRawData.getAction()).isEqualTo("CREATE");
+		assertThat(savedRawData.getAction()).isEqualTo(ActionEnum.from("create"));
 		assertThat(savedRawData.getDocument()).isEqualTo(document);
 		assertThat(savedRawData.getIsValid()).isTrue();
 		assertThat(savedRawData.getCreatedAt()).isNotNull();
@@ -54,10 +55,10 @@ public class RawDataRepositoryTest {
 	public void findByCreatedAtAfterAndIsValidTrue() {
 		// given
 		ZonedDateTime baseTime = ZonedDateTime.now().minusMinutes(1);
-		RawData rawData1 = createRawData("CREATE", true, baseTime.plusMinutes(1));
-		RawData rawData2 = createRawData("UPDATE", false, baseTime.minusMinutes(40));
-		RawData rawData3 = createRawData("DELETE", true, baseTime.plusMonths(1));
-		RawData rawData4 = createRawData("READ", true, baseTime.minusHours(10));
+		RawData rawData1 = createRawData("index", true, baseTime.minusHours(10));
+		RawData rawData2 = createRawData("create", true, baseTime.plusMinutes(1));
+		RawData rawData3 = createRawData("update", false, baseTime.minusMinutes(40));
+		RawData rawData4 = createRawData("delete", true, baseTime.plusMonths(1));
 
 		entityManager.persist(rawData1);
 		entityManager.persist(rawData2);
@@ -70,7 +71,7 @@ public class RawDataRepositoryTest {
 
 		// then
 		assertThat(foundRawData).hasSize(2);
-		assertThat(foundRawData).extracting(RawData::getAction).containsExactlyInAnyOrder("CREATE", "DELETE");
+		assertThat(foundRawData).extracting(RawData::getAction).containsExactlyInAnyOrder(ActionEnum.from("create"), ActionEnum.from("delete"));
 		assertThat(foundRawData).extracting(RawData::getIsValid).containsOnly(true);
 		assertThat(foundRawData).extracting(RawData::getCreatedAt).allSatisfy(createdAt ->
 			assertThat(createdAt).isAfter(baseTime)
@@ -81,7 +82,7 @@ public class RawDataRepositoryTest {
 		Map<String, Object> document = new HashMap<>();
 		document.put("key", "value-" + action);
 		RawData rawData = RawData.builder()
-			.action(action)
+			.action(ActionEnum.from(action))
 			.document(document)
 			.isValid(isValid)
 			.build();
