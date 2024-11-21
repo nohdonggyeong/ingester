@@ -7,4 +7,5 @@ import me.donggyeong.ingester.domain.RawData;
 
 @Repository
 public interface RawDataRepository extends JpaRepository<RawData, Long>, RawDataRepositoryCustom {
+	RawData findFirstByOrderByIdDesc();
 }
