@@ -37,31 +37,35 @@ class RawDataControllerTest {
 
 	@Test
 	void createRawData() throws Exception {
+		// given
 		when(rawDataService.createRawData(any(RawDataRequest.class))).thenReturn(mock(RawDataResponse.class));
 
+		// when
 		mockMvc.perform(
 			post(UriComponentsBuilder.fromPath(API_BASE_PATH).toUriString())
 				.contentType(MediaType.APPLICATION_JSON)
 				.content(objectMapper.writeValueAsString(new RawDataRequest()))
 		)
+		// then
 			.andExpect(status().isCreated())
 			.andExpect(jsonPath(JSON_ROOT_PATH).isNotEmpty());
-
 		verify(rawDataService, times(1)).createRawData(any(RawDataRequest.class));
 	}
 
 	@Test
 	void getRawDataAfterOffset() throws Exception {
+		// given
 		when(rawDataService.getRawDataAfterOffset()).thenReturn(Collections.singletonList(mock(RawDataResponse.class)));
 
+		// when
 		mockMvc.perform(
 			get(UriComponentsBuilder.fromPath(API_BASE_PATH).toUriString())
 				.contentType(MediaType.APPLICATION_JSON)
 		)
+		// then
 			.andExpect(status().isOk())
 			.andExpect(jsonPath(JSON_ROOT_PATH).isArray())
 			.andExpect(jsonPath(JSON_FIRST_ELEMENT_PATH).isNotEmpty());
-
 		verify(rawDataService, times(1)).getRawDataAfterOffset();
 	}
 }
