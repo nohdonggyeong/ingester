@@ -1,6 +1,6 @@
 package me.donggyeong.indexer.repository;
 
-import static me.donggyeong.indexer.domain.QRawData.*;
+import static me.donggyeong.indexer.domain.QSourceData.*;
 
 import java.time.ZonedDateTime;
 import java.util.List;
@@ -10,19 +10,19 @@ import org.springframework.stereotype.Repository;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 
 import lombok.RequiredArgsConstructor;
-import me.donggyeong.indexer.domain.RawData;
+import me.donggyeong.indexer.domain.SourceData;
 
 @Repository
 @RequiredArgsConstructor
-public class RawDataRepositoryCustomImpl implements RawDataRepositoryCustom {
+public class SourceDataRepositoryCustomImpl implements SourceDataRepositoryCustom {
 	private final JPAQueryFactory jpaQueryFactory;
 
 	@Override
-	public List<RawData> findByCreatedAtAfterAndIsValidTrue(ZonedDateTime offset) {
+	public List<SourceData> findByCreatedAtAfterAndIsValidTrue(ZonedDateTime offset) {
 		return jpaQueryFactory
-			.selectFrom(rawData)
-			.where(rawData.createdAt.gt(offset)
-				.and(rawData.isValid.isTrue())
+			.selectFrom(sourceData)
+			.where(sourceData.createdAt.gt(offset)
+				.and(sourceData.isValid.isTrue())
 			)
 			.fetch();
 	}

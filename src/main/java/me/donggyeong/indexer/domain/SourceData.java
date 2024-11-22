@@ -22,10 +22,10 @@ import lombok.NoArgsConstructor;
 import me.donggyeong.indexer.enums.ActionEnum;
 
 @Entity
-@Table(name = "raw_data")
+@Table(name = "source_data")
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Getter
-public class RawData {
+public class SourceData {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	@Column(name = "id", updatable = false)
@@ -33,7 +33,7 @@ public class RawData {
 
 	@Column(name = "action", nullable = false)
 	@Enumerated(EnumType.STRING)
-	private ActionEnum action;
+	private ActionEnum 	action;
 
 	@Column(name = "document", columnDefinition = "json")
 	@Type(JsonType.class)
@@ -53,7 +53,7 @@ public class RawData {
 	}
 
 	@Builder
-	public RawData(ActionEnum action, Map<String, Object> document, Boolean isValid) {
+	public SourceData(ActionEnum action, Map<String, Object> document, Boolean isValid) {
 		this.action = action;
 		this.document = document;
 		this.isValid = isValid;

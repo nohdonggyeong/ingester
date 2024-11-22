@@ -16,46 +16,46 @@ import org.springframework.web.util.UriComponentsBuilder;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-import me.donggyeong.indexer.dto.RawDataRequest;
-import me.donggyeong.indexer.dto.RawDataResponse;
-import me.donggyeong.indexer.service.RawDataService;
+import me.donggyeong.indexer.dto.SourceDataRequest;
+import me.donggyeong.indexer.dto.SourceDataResponse;
+import me.donggyeong.indexer.service.SourceDataService;
 
-@WebMvcTest(RawDataController.class)
-class RawDataControllerTest {
+@WebMvcTest(SourceDataController.class)
+class SourceDataControllerTest {
 	@Autowired
 	private MockMvc mockMvc;
 
 	@MockBean
-	private RawDataService rawDataService;
+	private SourceDataService sourceDataService;
 
 	@Autowired
 	private ObjectMapper objectMapper;
 
-	private static final String API_BASE_PATH = "/api/v1/raw-data";
+	private static final String API_BASE_PATH = "/api/v1/source-data";
 	private static final String JSON_ROOT_PATH = "$";
 	private static final String JSON_FIRST_ELEMENT_PATH = "$[0]";
 
 	@Test
-	void createRawData() throws Exception {
+	void createSourceData() throws Exception {
 		// given
-		when(rawDataService.createRawData(any(RawDataRequest.class))).thenReturn(mock(RawDataResponse.class));
+		when(sourceDataService.createSourceData(any(SourceDataRequest.class))).thenReturn(mock(SourceDataResponse.class));
 
 		// when
 		mockMvc.perform(
 			post(UriComponentsBuilder.fromPath(API_BASE_PATH).toUriString())
 				.contentType(MediaType.APPLICATION_JSON)
-				.content(objectMapper.writeValueAsString(new RawDataRequest()))
+				.content(objectMapper.writeValueAsString(new SourceDataRequest()))
 		)
 		// then
 			.andExpect(status().isCreated())
 			.andExpect(jsonPath(JSON_ROOT_PATH).isNotEmpty());
-		verify(rawDataService, times(1)).createRawData(any(RawDataRequest.class));
+		verify(sourceDataService, times(1)).createSourceData(any(SourceDataRequest.class));
 	}
 
 	@Test
-	void getRawDataAfterOffset() throws Exception {
+	void getSourceDataAfterOffset() throws Exception {
 		// given
-		when(rawDataService.getRawDataAfterOffset()).thenReturn(Collections.singletonList(mock(RawDataResponse.class)));
+		when(sourceDataService.getSourceDataAfterOffset()).thenReturn(Collections.singletonList(mock(SourceDataResponse.class)));
 
 		// when
 		mockMvc.perform(
@@ -66,6 +66,6 @@ class RawDataControllerTest {
 			.andExpect(status().isOk())
 			.andExpect(jsonPath(JSON_ROOT_PATH).isArray())
 			.andExpect(jsonPath(JSON_FIRST_ELEMENT_PATH).isNotEmpty());
-		verify(rawDataService, times(1)).getRawDataAfterOffset();
+		verify(sourceDataService, times(1)).getSourceDataAfterOffset();
 	}
 }
