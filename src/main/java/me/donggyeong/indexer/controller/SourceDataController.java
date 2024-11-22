@@ -10,9 +10,12 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import me.donggyeong.indexer.dto.SourceDataResponse;
 import me.donggyeong.indexer.dto.SourceDataRequest;
+import me.donggyeong.indexer.enumType.ErrorCode;
+import me.donggyeong.indexer.exception.CustomException;
 import me.donggyeong.indexer.service.SourceDataService;
 
 @RestController
@@ -22,7 +25,10 @@ public class SourceDataController {
 	private final SourceDataService sourceDataService;
 
 	@PostMapping
-	public ResponseEntity<SourceDataResponse> createSourceData(@RequestBody SourceDataRequest sourceDataRequest) {
+	public ResponseEntity<SourceDataResponse> createSourceData(@Valid @RequestBody SourceDataRequest sourceDataRequest) {
+		if (!sourceDataRequest.getDocument().containsKey("tenant") || !sourceDataRequest.getDocument().containsKey("id")) {
+			throw new CustomException(ErrorCode.INVALID_REQUEST);
+		}
 		SourceDataResponse sourceDataResponse = sourceDataService.createSourceData(sourceDataRequest);
 		return ResponseEntity.status(HttpStatus.CREATED).body(sourceDataResponse);
 	}

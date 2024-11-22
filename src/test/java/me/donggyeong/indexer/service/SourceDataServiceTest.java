@@ -15,7 +15,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import me.donggyeong.indexer.domain.SourceData;
 import me.donggyeong.indexer.dto.SourceDataRequest;
 import me.donggyeong.indexer.dto.SourceDataResponse;
-import me.donggyeong.indexer.enums.ActionEnum;
+import me.donggyeong.indexer.enumType.Action;
 import me.donggyeong.indexer.repository.SourceDataRepository;
 
 @SpringBootTest
@@ -36,21 +36,21 @@ class SourceDataServiceTest {
 		Map<String, Object> document = new HashMap<>();
 		document.put("tenant", "test");
 		document.put("id", 1L);
-		SourceDataRequest sourceDataRequest = new SourceDataRequest(ActionEnum.from("create"), document);
+		SourceDataRequest sourceDataRequest = new SourceDataRequest(Action.from("create"), document);
 
 		// when
 		SourceDataResponse sourceDataResponse = sourceDataService.createSourceData(sourceDataRequest);
 
 		// then
 		assertNotNull(sourceDataResponse);
-		assertEquals(ActionEnum.from("create"), sourceDataResponse.getAction());
+		assertEquals(Action.from("create"), sourceDataResponse.getAction());
 		assertMapEquals(document, sourceDataResponse.getDocument());
 		assertTrue(sourceDataResponse.getIsValid());
 		assertNotNull(sourceDataResponse.getCreatedAt());
 
 		SourceData sourceData = sourceDataRepository.findFirstByOrderByIdDesc();
 		assertNotNull(sourceData);
-		assertEquals(ActionEnum.from("create"), sourceData.getAction());
+		assertEquals(Action.from("create"), sourceData.getAction());
 		assertMapEquals(document, sourceData.getDocument());
 		assertTrue(sourceData.getIsValid());
 		assertNotNull(sourceData.getCreatedAt());
@@ -62,7 +62,7 @@ class SourceDataServiceTest {
 		Map<String, Object> document = new LinkedHashMap<>();
 		document.put("tenant", "test");
 		document.put("id", 1L);
-		SourceDataRequest sourceDataRequest = new SourceDataRequest(ActionEnum.from("create"), document);
+		SourceDataRequest sourceDataRequest = new SourceDataRequest(Action.from("create"), document);
 		sourceDataService.createSourceData(sourceDataRequest);
 
 		// when
@@ -74,7 +74,7 @@ class SourceDataServiceTest {
 		assertEquals(1, sourceDataResponseList.size());
 
 		SourceDataResponse sourceDataResponse = sourceDataResponseList.getFirst();
-		assertEquals(ActionEnum.from("create"), sourceDataResponse.getAction());
+		assertEquals(Action.from("create"), sourceDataResponse.getAction());
 		assertEquals("test", sourceDataResponse.getDocument().get("tenant"));
 		assertEquals(1L, ((Number) sourceDataResponse.getDocument().get("id")).longValue());
 	}

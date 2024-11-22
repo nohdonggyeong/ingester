@@ -2,7 +2,7 @@ package me.donggyeong.indexer.repository;
 
 import me.donggyeong.indexer.config.QuerydslConfiguration;
 import me.donggyeong.indexer.domain.SourceData;
-import me.donggyeong.indexer.enums.ActionEnum;
+import me.donggyeong.indexer.enumType.Action;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -34,7 +34,7 @@ public class SourceDataRepositoryTest {
 		document.put("key1", "value1");
 		document.put("key2", 123);
 		SourceData sourceData = SourceData.builder()
-			.action(ActionEnum.from("create"))
+			.action(Action.from("create"))
 			.document(document)
 			.isValid(true)
 			.build();
@@ -45,7 +45,7 @@ public class SourceDataRepositoryTest {
 		// then
 		assertThat(savedSourceData).isNotNull();
 		assertThat(savedSourceData.getId()).isNotNull();
-		assertThat(savedSourceData.getAction()).isEqualTo(ActionEnum.from("create"));
+		assertThat(savedSourceData.getAction()).isEqualTo(Action.from("create"));
 		assertThat(savedSourceData.getDocument()).isEqualTo(document);
 		assertThat(savedSourceData.getIsValid()).isTrue();
 		assertThat(savedSourceData.getCreatedAt()).isNotNull();
@@ -71,7 +71,7 @@ public class SourceDataRepositoryTest {
 
 		// then
 		assertThat(foundSourceData).hasSize(2);
-		assertThat(foundSourceData).extracting(SourceData::getAction).containsExactlyInAnyOrder(ActionEnum.from("create"), ActionEnum.from("delete"));
+		assertThat(foundSourceData).extracting(SourceData::getAction).containsExactlyInAnyOrder(Action.from("create"), Action.from("delete"));
 		assertThat(foundSourceData).extracting(SourceData::getIsValid).containsOnly(true);
 		assertThat(foundSourceData).extracting(SourceData::getCreatedAt).allSatisfy(createdAt ->
 			assertThat(createdAt).isAfter(baseTime)
@@ -82,7 +82,7 @@ public class SourceDataRepositoryTest {
 		Map<String, Object> document = new HashMap<>();
 		document.put("key", "value-" + action);
 		SourceData sourceData = SourceData.builder()
-			.action(ActionEnum.from(action))
+			.action(Action.from(action))
 			.document(document)
 			.isValid(isValid)
 			.build();

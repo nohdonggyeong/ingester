@@ -19,7 +19,7 @@ import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import me.donggyeong.indexer.enums.ActionEnum;
+import me.donggyeong.indexer.enumType.Action;
 
 @Entity
 @Table(name = "source_data")
@@ -33,7 +33,7 @@ public class SourceData {
 
 	@Column(name = "action", nullable = false)
 	@Enumerated(EnumType.STRING)
-	private ActionEnum 	action;
+	private Action action;
 
 	@Column(name = "document", columnDefinition = "json")
 	@Type(JsonType.class)
@@ -53,7 +53,7 @@ public class SourceData {
 	}
 
 	@Builder
-	public SourceData(ActionEnum action, Map<String, Object> document, Boolean isValid) {
+	public SourceData(Action action, Map<String, Object> document, Boolean isValid) {
 		this.action = action;
 		this.document = document;
 		this.isValid = isValid;
