@@ -1,4 +1,4 @@
-package me.donggyeong.ingester.dto;
+package me.donggyeong.indexer.dto;
 
 import java.util.Map;
 
@@ -7,8 +7,8 @@ import org.springframework.util.ObjectUtils;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import me.donggyeong.ingester.domain.RawData;
-import me.donggyeong.ingester.enums.ActionEnum;
+import me.donggyeong.indexer.domain.RawData;
+import me.donggyeong.indexer.enums.ActionEnum;
 
 @NoArgsConstructor
 @AllArgsConstructor

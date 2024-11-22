@@ -1,4 +1,4 @@
-package me.donggyeong.ingester.domain;
+package me.donggyeong.indexer.domain;
 
 import java.time.ZonedDateTime;
 import java.util.Map;
@@ -19,7 +19,7 @@ import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import me.donggyeong.ingester.enums.ActionEnum;
+import me.donggyeong.indexer.enums.ActionEnum;
 
 @Entity
 @Table(name = "raw_data")

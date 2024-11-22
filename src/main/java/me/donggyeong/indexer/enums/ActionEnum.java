@@ -1,4 +1,4 @@
-package me.donggyeong.ingester.enums;
+package me.donggyeong.indexer.enums;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 

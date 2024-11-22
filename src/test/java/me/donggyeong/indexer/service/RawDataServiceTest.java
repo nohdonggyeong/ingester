@@ -1,4 +1,4 @@
-package me.donggyeong.ingester.service;
+package me.donggyeong.indexer.service;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -12,11 +12,11 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
-import me.donggyeong.ingester.domain.RawData;
-import me.donggyeong.ingester.dto.RawDataRequest;
-import me.donggyeong.ingester.dto.RawDataResponse;
-import me.donggyeong.ingester.enums.ActionEnum;
-import me.donggyeong.ingester.repository.RawDataRepository;
+import me.donggyeong.indexer.domain.RawData;
+import me.donggyeong.indexer.dto.RawDataRequest;
+import me.donggyeong.indexer.dto.RawDataResponse;
+import me.donggyeong.indexer.enums.ActionEnum;
+import me.donggyeong.indexer.repository.RawDataRepository;
 
 @SpringBootTest
 class RawDataServiceTest {

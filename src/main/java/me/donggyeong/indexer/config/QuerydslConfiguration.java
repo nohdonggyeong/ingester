@@ -1,4 +1,4 @@
-package me.donggyeong.ingester.config;
+package me.donggyeong.indexer.config;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

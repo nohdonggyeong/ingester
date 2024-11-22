@@ -1,4 +1,4 @@
-package me.donggyeong.ingester.service;
+package me.donggyeong.indexer.service;
 
 import java.time.ZonedDateTime;
 import java.util.List;
@@ -8,10 +8,10 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import lombok.RequiredArgsConstructor;
-import me.donggyeong.ingester.domain.RawData;
-import me.donggyeong.ingester.dto.RawDataRequest;
-import me.donggyeong.ingester.dto.RawDataResponse;
-import me.donggyeong.ingester.repository.RawDataRepository;
+import me.donggyeong.indexer.domain.RawData;
+import me.donggyeong.indexer.dto.RawDataRequest;
+import me.donggyeong.indexer.dto.RawDataResponse;
+import me.donggyeong.indexer.repository.RawDataRepository;
 
 @Service
 @Transactional(readOnly = true)

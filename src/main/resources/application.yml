@@ -1,5 +1,5 @@
 spring:
   application:
-    name: ingester
+    name: indexer
   profiles:
     active: dev

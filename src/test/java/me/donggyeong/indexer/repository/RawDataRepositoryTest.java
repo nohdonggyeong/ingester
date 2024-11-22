@@ -1,8 +1,8 @@
-package me.donggyeong.ingester.repository;
+package me.donggyeong.indexer.repository;
 
-import me.donggyeong.ingester.config.QuerydslConfiguration;
-import me.donggyeong.ingester.domain.RawData;
-import me.donggyeong.ingester.enums.ActionEnum;
+import me.donggyeong.indexer.config.QuerydslConfiguration;
+import me.donggyeong.indexer.domain.RawData;
+import me.donggyeong.indexer.enums.ActionEnum;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;

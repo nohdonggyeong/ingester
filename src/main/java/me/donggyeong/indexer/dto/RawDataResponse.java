@@ -1,12 +1,12 @@
-package me.donggyeong.ingester.dto;
+package me.donggyeong.indexer.dto;
 
 import java.time.ZonedDateTime;
 import java.util.Map;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
-import me.donggyeong.ingester.domain.RawData;
-import me.donggyeong.ingester.enums.ActionEnum;
+import me.donggyeong.indexer.domain.RawData;
+import me.donggyeong.indexer.enums.ActionEnum;
 
 @AllArgsConstructor
 @Getter

@@ -1,4 +1,4 @@
-package me.donggyeong.ingester.controller;
+package me.donggyeong.indexer.controller;
 
 import java.util.List;
 
@@ -11,10 +11,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import lombok.RequiredArgsConstructor;
-import me.donggyeong.ingester.dto.RawDataResponse;
-import me.donggyeong.ingester.dto.RawDataRequest;
-import me.donggyeong.ingester.service.RawDataService;
-import me.donggyeong.ingester.service.RawDataServiceImpl;
+import me.donggyeong.indexer.dto.RawDataResponse;
+import me.donggyeong.indexer.dto.RawDataRequest;
+import me.donggyeong.indexer.service.RawDataService;
 
 @RestController
 @RequestMapping("/api/v1/raw-data")

@@ -1,6 +1,6 @@
-package me.donggyeong.ingester.repository;
+package me.donggyeong.indexer.repository;
 
-import static me.donggyeong.ingester.domain.QRawData.*;
+import static me.donggyeong.indexer.domain.QRawData.*;
 
 import java.time.ZonedDateTime;
 import java.util.List;
@@ -10,7 +10,7 @@ import org.springframework.stereotype.Repository;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 
 import lombok.RequiredArgsConstructor;
-import me.donggyeong.ingester.domain.RawData;
+import me.donggyeong.indexer.domain.RawData;
 
 @Repository
 @RequiredArgsConstructor

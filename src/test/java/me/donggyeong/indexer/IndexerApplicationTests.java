@@ -1,11 +1,10 @@
-package me.donggyeong.ingester;
+package me.donggyeong.indexer;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.context.ActiveProfiles;
 
 @SpringBootTest
-class IngesterApplicationTests {
+class IndexerApplicationTests {
 
 	@Test
 	void contextLoads() {

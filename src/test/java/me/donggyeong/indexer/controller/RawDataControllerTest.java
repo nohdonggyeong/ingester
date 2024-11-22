@@ -1,4 +1,4 @@
-package me.donggyeong.ingester.controller;
+package me.donggyeong.indexer.controller;
 
 import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
@@ -16,9 +16,9 @@ import org.springframework.web.util.UriComponentsBuilder;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-import me.donggyeong.ingester.dto.RawDataRequest;
-import me.donggyeong.ingester.dto.RawDataResponse;
-import me.donggyeong.ingester.service.RawDataService;
+import me.donggyeong.indexer.dto.RawDataRequest;
+import me.donggyeong.indexer.dto.RawDataResponse;
+import me.donggyeong.indexer.service.RawDataService;
 
 @WebMvcTest(RawDataController.class)
 class RawDataControllerTest {

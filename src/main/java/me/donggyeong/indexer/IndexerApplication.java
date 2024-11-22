@@ -1,13 +1,13 @@
-package me.donggyeong.ingester;
+package me.donggyeong.indexer;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 @SpringBootApplication
-public class IngesterApplication {
+public class IndexerApplication {
 
 	public static void main(String[] args) {
-		SpringApplication.run(IngesterApplication.class, args);
+		SpringApplication.run(IndexerApplication.class, args);
 	}
 
 }
