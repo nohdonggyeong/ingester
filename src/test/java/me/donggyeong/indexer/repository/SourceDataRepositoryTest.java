@@ -1,8 +1,8 @@
 package me.donggyeong.indexer.repository;
 
-import me.donggyeong.indexer.config.QuerydslConfiguration;
+import me.donggyeong.indexer.config.QuerydslConfig;
 import me.donggyeong.indexer.domain.SourceData;
-import me.donggyeong.indexer.enumType.Action;
+import me.donggyeong.indexer.enums.Action;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,7 +18,7 @@ import java.util.Map;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @DataJpaTest
-@Import(QuerydslConfiguration.class)
+@Import(QuerydslConfig.class)
 public class SourceDataRepositoryTest {
 
 	@Autowired

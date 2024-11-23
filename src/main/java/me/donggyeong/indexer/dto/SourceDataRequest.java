@@ -9,7 +9,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import me.donggyeong.indexer.domain.SourceData;
-import me.donggyeong.indexer.enumType.Action;
+import me.donggyeong.indexer.enums.Action;
 
 @NoArgsConstructor
 @AllArgsConstructor

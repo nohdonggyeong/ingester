@@ -19,7 +19,7 @@ import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import me.donggyeong.indexer.enumType.Action;
+import me.donggyeong.indexer.enums.Action;
 
 @Entity
 @Table(name = "source_data")

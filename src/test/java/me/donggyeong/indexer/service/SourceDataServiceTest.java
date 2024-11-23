@@ -15,7 +15,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import me.donggyeong.indexer.domain.SourceData;
 import me.donggyeong.indexer.dto.SourceDataRequest;
 import me.donggyeong.indexer.dto.SourceDataResponse;
-import me.donggyeong.indexer.enumType.Action;
+import me.donggyeong.indexer.enums.Action;
 import me.donggyeong.indexer.repository.SourceDataRepository;
 
 @SpringBootTest

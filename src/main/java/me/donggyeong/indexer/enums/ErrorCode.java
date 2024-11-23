@@ -1,4 +1,4 @@
-package me.donggyeong.indexer.enumType;
+package me.donggyeong.indexer.enums;
 
 public enum ErrorCode {
 	INVALID_REQUEST(400, "Invalid request data"),

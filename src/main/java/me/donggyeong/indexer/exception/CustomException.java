@@ -1,6 +1,6 @@
 package me.donggyeong.indexer.exception;
 
-import me.donggyeong.indexer.enumType.ErrorCode;
+import me.donggyeong.indexer.enums.ErrorCode;
 
 public class CustomException extends RuntimeException {
 	private final ErrorCode errorCode;
