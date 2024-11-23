@@ -1,4 +1,4 @@
-package me.donggyeong.indexer.domain;
+package me.donggyeong.indexer.entity;
 
 import java.time.ZonedDateTime;
 import java.util.Map;

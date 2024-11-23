@@ -8,7 +8,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import lombok.RequiredArgsConstructor;
-import me.donggyeong.indexer.domain.SourceData;
+import me.donggyeong.indexer.entity.SourceData;
 import me.donggyeong.indexer.dto.SourceDataRequest;
 import me.donggyeong.indexer.dto.SourceDataResponse;
 import me.donggyeong.indexer.repository.SourceDataRepository;

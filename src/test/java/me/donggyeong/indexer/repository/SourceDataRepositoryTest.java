@@ -1,7 +1,7 @@
 package me.donggyeong.indexer.repository;
 
 import me.donggyeong.indexer.config.QuerydslConfig;
-import me.donggyeong.indexer.domain.SourceData;
+import me.donggyeong.indexer.entity.SourceData;
 import me.donggyeong.indexer.enums.Action;
 
 import org.junit.jupiter.api.Test;

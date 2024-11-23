@@ -5,7 +5,7 @@ import java.util.Map;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
-import me.donggyeong.indexer.domain.SourceData;
+import me.donggyeong.indexer.entity.SourceData;
 import me.donggyeong.indexer.enums.Action;
 
 @AllArgsConstructor
