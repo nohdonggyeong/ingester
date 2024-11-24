@@ -16,4 +16,6 @@ spring:
     consumer:
       group-id: myGroup
 
+server:
+  port: 8082
 # java -jar your-application.jar --spring.profiles.active=prod
