@@ -9,4 +9,11 @@ spring:
     hibernate:
       ddl-auto: update
 
+  kafka:
+    bootstrap-servers: localhost:9092,localhost:9093,localhost:9094
+    template:
+      default-topic: my-topic
+    consumer:
+      group-id: myGroup
+
 # java -jar your-application.jar --spring.profiles.active=prod

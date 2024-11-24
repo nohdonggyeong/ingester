@@ -11,3 +11,10 @@ spring:
   h2:
     console:
       enabled: true
+
+  kafka:
+    bootstrap-servers: localhost:9092,localhost:9093,localhost:9094
+    template:
+      default-topic: my-topic
+    consumer:
+      group-id: myGroup
