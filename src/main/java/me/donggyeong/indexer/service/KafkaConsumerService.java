@@ -6,15 +6,19 @@ import org.springframework.messaging.handler.annotation.Headers;
 import org.springframework.messaging.handler.annotation.Payload;
 import org.springframework.stereotype.Service;
 
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import me.donggyeong.indexer.dto.SourceDataRequest;
 
 @Service
+@RequiredArgsConstructor
 @Slf4j
 public class KafkaConsumerService {
+	private final SourceDataService sourceDataService;
+
 	@KafkaListener(topics = "${spring.kafka.template.default-topic}", groupId = "${spring.kafka.consumer.group-id}")
 	public void consume(@Payload SourceDataRequest message, @Headers MessageHeaders messageHeaders) {
-		log.info(message.getAction().toString());
-		log.info(message.getDocument().toString());
+		log.info("Received Kafka message - Action: {}, Document: {}", message.getAction().toString(), message.getDocument().toString());
+		sourceDataService.createSourceData(message);
 	}
 }
