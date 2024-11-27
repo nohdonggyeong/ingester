@@ -1,5 +1,6 @@
 package me.donggyeong.indexer.entity;
 
+import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.util.Map;
 
@@ -48,7 +49,7 @@ public class SourceData {
 	@PrePersist
 	protected void onCreate() {
 		if (createdAt == null) {
-			createdAt = ZonedDateTime.now();
+			createdAt = ZonedDateTime.now(ZoneId.of("UTC"));
 		}
 	}
 
