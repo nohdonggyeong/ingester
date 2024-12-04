@@ -25,17 +25,12 @@ public class SourceDataController {
 	private final SourceDataService sourceDataService;
 
 	@PostMapping
+	@Deprecated
 	public ResponseEntity<SourceDataResponse> createSourceData(@Valid @RequestBody SourceDataRequest sourceDataRequest) {
 		if (!sourceDataRequest.getDocument().containsKey("source") || !sourceDataRequest.getDocument().containsKey("id")) {
 			throw new CustomException(ErrorCode.INVALID_REQUEST);
 		}
 		SourceDataResponse sourceDataResponse = sourceDataService.createSourceData(sourceDataRequest);
 		return ResponseEntity.status(HttpStatus.CREATED).body(sourceDataResponse);
-	}
-
-	@GetMapping
-	public ResponseEntity<List<SourceDataResponse>> getSourceDataAfterOffset() {
-		List<SourceDataResponse> sourceDataResponseList = sourceDataService.getSourceDataAfterOffset();
-		return ResponseEntity.status(HttpStatus.OK).body(sourceDataResponseList);
 	}
 }

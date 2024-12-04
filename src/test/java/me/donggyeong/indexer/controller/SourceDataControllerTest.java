@@ -58,21 +58,4 @@ class SourceDataControllerTest {
 			.andExpect(jsonPath(JSON_ROOT_PATH).isNotEmpty());
 		verify(sourceDataService, times(1)).createSourceData(any(SourceDataRequest.class));
 	}
-
-	@Test
-	void getSourceDataAfterOffset() throws Exception {
-		// given
-		when(sourceDataService.getSourceDataAfterOffset()).thenReturn(Collections.singletonList(mock(SourceDataResponse.class)));
-
-		// when
-		mockMvc.perform(
-			get(UriComponentsBuilder.fromPath(API_BASE_PATH).toUriString())
-				.contentType(MediaType.APPLICATION_JSON)
-		)
-		// then
-			.andExpect(status().isOk())
-			.andExpect(jsonPath(JSON_ROOT_PATH).isArray())
-			.andExpect(jsonPath(JSON_FIRST_ELEMENT_PATH).isNotEmpty());
-		verify(sourceDataService, times(1)).getSourceDataAfterOffset();
-	}
 }
