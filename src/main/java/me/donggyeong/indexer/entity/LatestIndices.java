@@ -16,10 +16,10 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 @Entity
-@Table(name = "index_details")
+@Table(name = "latest_indices")
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Getter
-public class IndexDetails {
+public class LatestIndices {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	@Column(name = "id", updatable = false)
@@ -28,26 +28,26 @@ public class IndexDetails {
 	@Column(name = "source", nullable = false)
 	private String source;
 
-	@Column(name = "index_alias")
-	private String indexAlias;
-
 	@Column(name = "latest_index")
 	private String latestIndex;
 
 	@Column(name = "last_indexed_at")
 	private ZonedDateTime lastIndexedAt;
 
+	@Column(name = "index_alias")
+	private String indexAlias;
+
 	@Builder
-	public IndexDetails(String source) {
+	public LatestIndices(String source) {
 		this.source = source;
-		this.indexAlias = "alias_" + source;
+		this.indexAlias = "alias_of_" + source;
 		updateLatestIndex();
 	}
 
 	public void updateLatestIndex() {
 		ZonedDateTime utcNow = ZonedDateTime.now(ZoneId.of("UTC"));
 		DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyyMMddHHmmssSS");
-		this.latestIndex = "index_" + this.source + "_" + utcNow.format(formatter);
+		this.latestIndex = "index_of_" + this.source + "_" + utcNow.format(formatter);
 	}
 
 	public void updateLastIndexedAt() {

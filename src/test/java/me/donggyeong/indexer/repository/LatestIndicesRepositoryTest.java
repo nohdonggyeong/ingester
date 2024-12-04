@@ -10,33 +10,33 @@ import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.context.annotation.Import;
 
 import me.donggyeong.indexer.config.QuerydslConfig;
-import me.donggyeong.indexer.entity.IndexDetails;
+import me.donggyeong.indexer.entity.LatestIndices;
 
 @DataJpaTest
 @Import(QuerydslConfig.class)
-class IndexDetailsRepositoryTest {
+class LatestIndicesRepositoryTest {
 
 	@Autowired
-	private IndexDetailsRepository indexDetailsRepository;
+	private LatestIndicesRepository latestIndicesRepository;
 
 	@Test
 	void save() {
 		// given
 		String source = "newSource";
-		IndexDetails indexDetails = IndexDetails.builder()
+		LatestIndices latestIndices = LatestIndices.builder()
 			.source(source)
 			.build();
 
 		// when
-		IndexDetails savedIndexDetails = indexDetailsRepository.save(indexDetails);
+		LatestIndices savedLatestIndices = latestIndicesRepository.save(latestIndices);
 
 		// then
-		assertThat(savedIndexDetails).isNotNull();
-		assertThat(savedIndexDetails.getId()).isNotNull(); // Assuming there's an ID generated
-		assertThat(savedIndexDetails.getSource()).isEqualTo(source);
+		assertThat(savedLatestIndices).isNotNull();
+		assertThat(savedLatestIndices.getId()).isNotNull(); // Assuming there's an ID generated
+		assertThat(savedLatestIndices.getSource()).isEqualTo(source);
 
 		// Verify retrieval
-		Optional<IndexDetails> retrievedIndexDetails = indexDetailsRepository.findBySource(source);
+		Optional<LatestIndices> retrievedIndexDetails = latestIndicesRepository.findBySource(source);
 		assertThat(retrievedIndexDetails).isPresent();
 		assertThat(retrievedIndexDetails.get().getSource()).isEqualTo(source);
 	}
@@ -45,13 +45,13 @@ class IndexDetailsRepositoryTest {
 	void findBySource() {
 		// given
 		String source = "testSource";
-		IndexDetails indexDetails = IndexDetails.builder()
+		LatestIndices latestIndices = LatestIndices.builder()
 			.source(source)
 			.build();
-		indexDetailsRepository.save(indexDetails);
+		latestIndicesRepository.save(latestIndices);
 
 		// when
-		Optional<IndexDetails> result = indexDetailsRepository.findBySource(source);
+		Optional<LatestIndices> result = latestIndicesRepository.findBySource(source);
 
 		// then
 		assertThat(result).isPresent();

@@ -5,9 +5,9 @@ import java.util.Optional;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
-import me.donggyeong.indexer.entity.IndexDetails;
+import me.donggyeong.indexer.entity.LatestIndices;
 
 @Repository
-public interface IndexDetailsRepository extends JpaRepository<IndexDetails, Long> {
-	Optional<IndexDetails> findBySource(String source);
+public interface LatestIndicesRepository extends JpaRepository<LatestIndices, Long> {
+	Optional<LatestIndices> findBySource(String source);
 }
