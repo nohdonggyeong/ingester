@@ -43,7 +43,7 @@ class SourceDataControllerTest {
 		// given
 		when(sourceDataService.createSourceData(any(SourceDataRequest.class))).thenReturn(mock(SourceDataResponse.class));
 		Map<String, Object> document = new HashMap<>();
-		document.put("tenant", "samsungsds");
+		document.put("source", "samsungsds");
 		document.put("id", 1L);
 		SourceDataRequest sourceDataRequest = new SourceDataRequest(Action.CREATE, document);
 

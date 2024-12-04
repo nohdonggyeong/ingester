@@ -9,13 +9,13 @@ import me.donggyeong.indexer.entity.IndexDetails;
 @AllArgsConstructor
 @Getter
 public class IndexDetailsResponse {
-	private String tenant;
+	private String source;
 	private String indexAlias;
 	private String latestIndex;
 	private ZonedDateTime lastIndexedAt;
 
 	public IndexDetailsResponse(IndexDetails indexDetails) {
-		this.tenant = indexDetails.getTenant();
+		this.source = indexDetails.getSource();
 		this.indexAlias = indexDetails.getIndexAlias();
 		this.latestIndex = indexDetails.getLatestIndex();
 		this.lastIndexedAt = indexDetails.getLastIndexedAt();

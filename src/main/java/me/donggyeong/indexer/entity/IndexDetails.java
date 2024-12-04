@@ -25,8 +25,8 @@ public class IndexDetails {
 	@Column(name = "id", updatable = false)
 	private Long id;
 
-	@Column(name = "tenant", nullable = false)
-	private String tenant;
+	@Column(name = "source", nullable = false)
+	private String source;
 
 	@Column(name = "index_alias")
 	private String indexAlias;
@@ -38,16 +38,16 @@ public class IndexDetails {
 	private ZonedDateTime lastIndexedAt;
 
 	@Builder
-	public IndexDetails(String tenant) {
-		this.tenant = tenant;
-		this.indexAlias = "alias_" + tenant;
+	public IndexDetails(String source) {
+		this.source = source;
+		this.indexAlias = "alias_" + source;
 		updateLatestIndex();
 	}
 
 	public void updateLatestIndex() {
 		ZonedDateTime utcNow = ZonedDateTime.now(ZoneId.of("UTC"));
 		DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyyMMddHHmmssSS");
-		this.latestIndex = "index_" + this.tenant + "_" + utcNow.format(formatter);
+		this.latestIndex = "index_" + this.source + "_" + utcNow.format(formatter);
 	}
 
 	public void updateLastIndexedAt() {

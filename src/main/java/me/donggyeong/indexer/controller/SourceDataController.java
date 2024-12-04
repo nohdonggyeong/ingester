@@ -26,7 +26,7 @@ public class SourceDataController {
 
 	@PostMapping
 	public ResponseEntity<SourceDataResponse> createSourceData(@Valid @RequestBody SourceDataRequest sourceDataRequest) {
-		if (!sourceDataRequest.getDocument().containsKey("tenant") || !sourceDataRequest.getDocument().containsKey("id")) {
+		if (!sourceDataRequest.getDocument().containsKey("source") || !sourceDataRequest.getDocument().containsKey("id")) {
 			throw new CustomException(ErrorCode.INVALID_REQUEST);
 		}
 		SourceDataResponse sourceDataResponse = sourceDataService.createSourceData(sourceDataRequest);

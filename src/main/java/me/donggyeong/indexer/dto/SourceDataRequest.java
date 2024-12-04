@@ -24,7 +24,7 @@ public class SourceDataRequest {
 		return SourceData.builder()
 			.action(this.action)
 			.document(this.document)
-			.isValid(!ObjectUtils.isEmpty(this.document) && this.document.containsKey("tenant") && this.document.containsKey("id"))
+			.isValid(!ObjectUtils.isEmpty(this.document) && this.document.containsKey("source") && this.document.containsKey("id"))
 			.build();
 	}
 }

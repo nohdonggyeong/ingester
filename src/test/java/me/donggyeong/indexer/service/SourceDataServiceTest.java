@@ -34,7 +34,7 @@ class SourceDataServiceTest {
 	void createSourceData() {
 		// given
 		Map<String, Object> document = new HashMap<>();
-		document.put("tenant", "test");
+		document.put("source", "test");
 		document.put("id", 1L);
 		SourceDataRequest sourceDataRequest = new SourceDataRequest(Action.from("create"), document);
 
@@ -60,7 +60,7 @@ class SourceDataServiceTest {
 	void getSourceDataAfterOffset() {
 		// given
 		Map<String, Object> document = new LinkedHashMap<>();
-		document.put("tenant", "test");
+		document.put("source", "test");
 		document.put("id", 1L);
 		SourceDataRequest sourceDataRequest = new SourceDataRequest(Action.from("create"), document);
 		sourceDataService.createSourceData(sourceDataRequest);
@@ -75,7 +75,7 @@ class SourceDataServiceTest {
 
 		SourceDataResponse sourceDataResponse = sourceDataResponseList.getFirst();
 		assertEquals(Action.from("create"), sourceDataResponse.getAction());
-		assertEquals("test", sourceDataResponse.getDocument().get("tenant"));
+		assertEquals("test", sourceDataResponse.getDocument().get("source"));
 		assertEquals(1L, ((Number) sourceDataResponse.getDocument().get("id")).longValue());
 	}
 

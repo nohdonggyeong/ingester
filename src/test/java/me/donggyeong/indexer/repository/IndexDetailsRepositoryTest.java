@@ -22,9 +22,9 @@ class IndexDetailsRepositoryTest {
 	@Test
 	void save() {
 		// given
-		String tenant = "newTenant";
+		String source = "newSource";
 		IndexDetails indexDetails = IndexDetails.builder()
-			.tenant(tenant)
+			.source(source)
 			.build();
 
 		// when
@@ -33,28 +33,28 @@ class IndexDetailsRepositoryTest {
 		// then
 		assertThat(savedIndexDetails).isNotNull();
 		assertThat(savedIndexDetails.getId()).isNotNull(); // Assuming there's an ID generated
-		assertThat(savedIndexDetails.getTenant()).isEqualTo(tenant);
+		assertThat(savedIndexDetails.getSource()).isEqualTo(source);
 
 		// Verify retrieval
-		Optional<IndexDetails> retrievedIndexDetails = indexDetailsRepository.findByTenant(tenant);
+		Optional<IndexDetails> retrievedIndexDetails = indexDetailsRepository.findBySource(source);
 		assertThat(retrievedIndexDetails).isPresent();
-		assertThat(retrievedIndexDetails.get().getTenant()).isEqualTo(tenant);
+		assertThat(retrievedIndexDetails.get().getSource()).isEqualTo(source);
 	}
 
 	@Test
-	void findByTenant() {
+	void findBySource() {
 		// given
-		String tenant = "testTenant";
+		String source = "testSource";
 		IndexDetails indexDetails = IndexDetails.builder()
-			.tenant(tenant)
+			.source(source)
 			.build();
 		indexDetailsRepository.save(indexDetails);
 
 		// when
-		Optional<IndexDetails> result = indexDetailsRepository.findByTenant(tenant);
+		Optional<IndexDetails> result = indexDetailsRepository.findBySource(source);
 
 		// then
 		assertThat(result).isPresent();
-		assertThat(result.get().getTenant()).isEqualTo(tenant);
+		assertThat(result.get().getSource()).isEqualTo(source);
 	}
 }

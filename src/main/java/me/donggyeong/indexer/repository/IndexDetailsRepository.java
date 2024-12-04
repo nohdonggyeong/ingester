@@ -9,5 +9,5 @@ import me.donggyeong.indexer.entity.IndexDetails;
 
 @Repository
 public interface IndexDetailsRepository extends JpaRepository<IndexDetails, Long> {
-	Optional<IndexDetails> findByTenant(String tenant);
+	Optional<IndexDetails> findBySource(String source);
 }

@@ -30,50 +30,50 @@ class IndexDetailsServiceTest {
 	@Test
 	void createIndexDetails() {
 		// given
-		String tenant = "testTenant";
+		String source = "testSource";
 
 		// when
-		IndexDetailsResponse response = indexDetailsService.createIndexDetails(tenant);
+		IndexDetailsResponse response = indexDetailsService.createIndexDetails(source);
 
 		// then
 		assertThat(response).isNotNull();
-		assertThat(response.getTenant()).isEqualTo(tenant);
+		assertThat(response.getSource()).isEqualTo(source);
 
 		// Verify that it was saved in the repository
-		Optional<IndexDetails> savedIndexDetails = indexDetailsRepository.findByTenant(tenant);
+		Optional<IndexDetails> savedIndexDetails = indexDetailsRepository.findBySource(source);
 		assertThat(savedIndexDetails).isPresent();
-		assertThat(savedIndexDetails.get().getTenant()).isEqualTo(tenant);
+		assertThat(savedIndexDetails.get().getSource()).isEqualTo(source);
 	}
 
 	@Test
-	void getIndexDetailsByTenant() {
+	void getIndexDetailsBySource() {
 		// given
-		String tenant = "testTenant";
-		indexDetailsRepository.save(IndexDetails.builder().tenant(tenant).build());
+		String source = "testSource";
+		indexDetailsRepository.save(IndexDetails.builder().source(source).build());
 
 		// when
-		IndexDetailsResponse response = indexDetailsService.getIndexDetailsByTenant(tenant);
+		IndexDetailsResponse response = indexDetailsService.getIndexDetailsBySource(source);
 
 		// then
 		assertThat(response).isNotNull();
-		assertThat(response.getTenant()).isEqualTo(tenant);
+		assertThat(response.getSource()).isEqualTo(source);
 	}
 
 	@Test
 	void updateLastIndexedAt() {
 		// given
-		String tenant = "testTenant";
-		IndexDetails indexDetails = IndexDetails.builder().tenant(tenant).build();
+		String source = "testSource";
+		IndexDetails indexDetails = IndexDetails.builder().source(source).build();
 
 		// Save the IndexDetails to the repository.
 		indexDetailsRepository.save(indexDetails);
 
 		// when
-		IndexDetailsResponse response = indexDetailsService.updateLastIndexedAt(tenant);
+		IndexDetailsResponse response = indexDetailsService.updateLastIndexedAt(source);
 
 		// then
 		assertThat(response).isNotNull();
-		assertThat(response.getTenant()).isEqualTo(tenant);
+		assertThat(response.getSource()).isEqualTo(source);
 		assertThat(response.getLastIndexedAt()).isNotNull();  // Assuming this method exists and returns a timestamp.
 	}
 }

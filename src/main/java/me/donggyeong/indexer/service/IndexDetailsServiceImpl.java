@@ -17,9 +17,9 @@ public class IndexDetailsServiceImpl implements IndexDetailsService{
 
 	@Override
 	@Transactional
-	public IndexDetailsResponse createIndexDetails(String tenant) {
+	public IndexDetailsResponse createIndexDetails(String source) {
 		IndexDetails indexDetails = IndexDetails.builder()
-			.tenant(tenant)
+			.source(source)
 			.build();
 		indexDetails = indexDetailsRepository.save(indexDetails);
 		return new IndexDetailsResponse(indexDetails);
@@ -27,17 +27,17 @@ public class IndexDetailsServiceImpl implements IndexDetailsService{
 
 	@Override
 	@Transactional(readOnly = true)
-	public IndexDetailsResponse getIndexDetailsByTenant(String tenant) {
-		Optional<IndexDetails> optionalIndexDetails = indexDetailsRepository.findByTenant(tenant);
+	public IndexDetailsResponse getIndexDetailsBySource(String source) {
+		Optional<IndexDetails> optionalIndexDetails = indexDetailsRepository.findBySource(source);
 		return optionalIndexDetails.map(IndexDetailsResponse::new).orElse(null);
 	}
 
 	@Override
 	@Transactional
-	public IndexDetailsResponse updateLastIndexedAt(String tenant) {
-		Optional<IndexDetails> optionalIndexDetails = indexDetailsRepository.findByTenant(tenant);
+	public IndexDetailsResponse updateLastIndexedAt(String source) {
+		Optional<IndexDetails> optionalIndexDetails = indexDetailsRepository.findBySource(source);
 		if (optionalIndexDetails.isEmpty()) {
-			throw new IllegalArgumentException("not found: " + tenant);
+			throw new IllegalArgumentException("not found: " + source);
 		}
 		IndexDetails indexDetails = optionalIndexDetails.get();
 		indexDetails.updateLastIndexedAt();
