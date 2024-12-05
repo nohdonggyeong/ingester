@@ -3,7 +3,6 @@ package me.donggyeong.indexer.service;
 import static org.junit.jupiter.api.Assertions.*;
 
 import java.util.HashMap;
-import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -12,7 +11,6 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
-import me.donggyeong.indexer.entity.SourceData;
 import me.donggyeong.indexer.dto.SourceDataRequest;
 import me.donggyeong.indexer.dto.SourceDataResponse;
 import me.donggyeong.indexer.enums.Action;

@@ -2,8 +2,6 @@ package me.donggyeong.indexer.dto;
 
 import java.util.Map;
 
-import org.springframework.util.ObjectUtils;
-
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Getter;

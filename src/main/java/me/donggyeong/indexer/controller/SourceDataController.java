@@ -11,8 +11,6 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import me.donggyeong.indexer.dto.SourceDataResponse;
 import me.donggyeong.indexer.dto.SourceDataRequest;
-import me.donggyeong.indexer.enums.ErrorCode;
-import me.donggyeong.indexer.exception.CustomException;
 import me.donggyeong.indexer.service.SourceDataService;
 
 @RestController
