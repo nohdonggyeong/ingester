@@ -2,7 +2,6 @@ package me.donggyeong.indexer.dto;
 
 import java.time.ZonedDateTime;
 
-import jakarta.persistence.Column;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import me.donggyeong.indexer.entity.LatestIndices;

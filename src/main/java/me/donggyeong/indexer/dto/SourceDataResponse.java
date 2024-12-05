@@ -6,20 +6,17 @@ import java.util.Map;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import me.donggyeong.indexer.entity.SourceData;
-import me.donggyeong.indexer.enums.Action;
 
 @AllArgsConstructor
 @Getter
 public class SourceDataResponse {
-	private Action action;
-	private Map<String, Object> document;
+	private Map<String, Object> data;
 	private Boolean isValid;
-	private ZonedDateTime createdAt;
+	private ZonedDateTime consumedAt;
 
 	public SourceDataResponse(SourceData sourceData) {
-		this.action = sourceData.getAction();
-		this.document = sourceData.getDocument();
+		this.data = sourceData.getData();
 		this.isValid = sourceData.getIsValid();
-		this.createdAt = sourceData.getCreatedAt();
+		this.consumedAt = sourceData.getConsumedAt();
 	}
 }

@@ -30,13 +30,12 @@ public class SourceDataRepositoryTest {
 	@Test
 	public void save() {
 		// given
-		Map<String, Object> document = new HashMap<>();
-		document.put("key1", "value1");
-		document.put("key2", 123);
+		Map<String, Object> data = new HashMap<>();
+		data.put("action", Action.CREATE.toString());
+		data.put("source", "hub");
+		data.put("id", "123");
 		SourceData sourceData = SourceData.builder()
-			.action(Action.from("create"))
-			.document(document)
-			.isValid(true)
+			.data(data)
 			.build();
 
 		// when
@@ -45,48 +44,40 @@ public class SourceDataRepositoryTest {
 		// then
 		assertThat(savedSourceData).isNotNull();
 		assertThat(savedSourceData.getId()).isNotNull();
-		assertThat(savedSourceData.getAction()).isEqualTo(Action.from("create"));
-		assertThat(savedSourceData.getDocument()).isEqualTo(document);
+		assertThat(savedSourceData.getData()).isEqualTo(data);
 		assertThat(savedSourceData.getIsValid()).isTrue();
-		assertThat(savedSourceData.getCreatedAt()).isNotNull();
+		assertThat(savedSourceData.getConsumedAt()).isNotNull();
 	}
 
 	@Test
-	public void findByCreatedAtAfterAndIsValidTrue() {
+	public void findByConsumedAtAfterAndIsValidTrue() {
 		// given
-		ZonedDateTime baseTime = ZonedDateTime.now().minusMinutes(1);
-		SourceData sourceData1 = createSourceData("index", true, baseTime.minusHours(10));
-		SourceData sourceData2 = createSourceData("create", true, baseTime.plusMinutes(1));
-		SourceData sourceData3 = createSourceData("update", false, baseTime.minusMinutes(40));
-		SourceData sourceData4 = createSourceData("delete", true, baseTime.plusMonths(1));
-
+		Map<String, Object> data1 = new HashMap<>();
+		data1.put("action", Action.CREATE.toString());
+		data1.put("source", "hub");
+		data1.put("id", "123");
+		Map<String, Object> data2 = new HashMap<>();
+		data2.put("action", Action.UPDATE.toString());
+		data2.put("id", "123");
+		SourceData sourceData1 = SourceData.builder()
+			.data(data1)
+			.build();
+		SourceData sourceData2 = SourceData.builder()
+			.data(data2)
+			.build();
 		entityManager.persist(sourceData1);
 		entityManager.persist(sourceData2);
-		entityManager.persist(sourceData3);
-		entityManager.persist(sourceData4);
 		entityManager.flush();
 
 		// when
-		List<SourceData> foundSourceData = sourceDataRepository.findByCreatedAtAfterAndIsValidTrue(baseTime);
+		ZonedDateTime baseTime = ZonedDateTime.now().minusMinutes(1);
+		List<SourceData> foundSourceData = sourceDataRepository.findByConsumedAtAfterAndIsValidTrue(baseTime);
 
 		// then
-		assertThat(foundSourceData).hasSize(2);
-		assertThat(foundSourceData).extracting(SourceData::getAction).containsExactlyInAnyOrder(Action.from("create"), Action.from("delete"));
+		assertThat(foundSourceData).hasSize(1);
 		assertThat(foundSourceData).extracting(SourceData::getIsValid).containsOnly(true);
-		assertThat(foundSourceData).extracting(SourceData::getCreatedAt).allSatisfy(createdAt ->
-			assertThat(createdAt).isAfter(baseTime)
+		assertThat(foundSourceData).extracting(SourceData::getConsumedAt).allSatisfy(consumedAt ->
+			assertThat(consumedAt).isAfter(baseTime)
 		);
-	}
-
-	private SourceData createSourceData(String action, boolean isValid, ZonedDateTime createdAt) {
-		Map<String, Object> document = new HashMap<>();
-		document.put("key", "value-" + action);
-		SourceData sourceData = SourceData.builder()
-			.action(Action.from(action))
-			.document(document)
-			.isValid(isValid)
-			.build();
-		sourceData.update(createdAt);
-		return sourceData;
 	}
 }

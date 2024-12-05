@@ -7,5 +7,4 @@ import me.donggyeong.indexer.entity.SourceData;
 
 @Repository
 public interface SourceDataRepository extends JpaRepository<SourceData, Long>, SourceDataRepositoryCustom {
-	SourceData findFirstByOrderByIdDesc();
 }

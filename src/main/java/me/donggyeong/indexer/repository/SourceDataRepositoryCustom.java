@@ -6,5 +6,5 @@ import java.util.List;
 import me.donggyeong.indexer.entity.SourceData;
 
 public interface SourceDataRepositoryCustom {
-	List<SourceData> findByCreatedAtAfterAndIsValidTrue(ZonedDateTime offset);
+	List<SourceData> findByConsumedAtAfterAndIsValidTrue(ZonedDateTime offset);
 }

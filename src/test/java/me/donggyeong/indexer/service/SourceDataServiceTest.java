@@ -33,36 +33,30 @@ class SourceDataServiceTest {
 	@Test
 	void createSourceData() {
 		// given
-		Map<String, Object> document = new HashMap<>();
-		document.put("source", "test");
-		document.put("id", 1L);
-		SourceDataRequest sourceDataRequest = new SourceDataRequest(Action.from("create"), document);
+		Map<String, Object> data = new HashMap<>();
+		data.put("action", Action.CREATE.toString());
+		data.put("source", "hub");
+		data.put("id", "123");
+		SourceDataRequest sourceDataRequest = new SourceDataRequest(data);
 
 		// when
 		SourceDataResponse sourceDataResponse = sourceDataService.createSourceData(sourceDataRequest);
 
 		// then
 		assertNotNull(sourceDataResponse);
-		assertEquals(Action.from("create"), sourceDataResponse.getAction());
-		assertMapEquals(document, sourceDataResponse.getDocument());
+		assertMapEquals(data, sourceDataResponse.getData());
 		assertTrue(sourceDataResponse.getIsValid());
-		assertNotNull(sourceDataResponse.getCreatedAt());
-
-		SourceData sourceData = sourceDataRepository.findFirstByOrderByIdDesc();
-		assertNotNull(sourceData);
-		assertEquals(Action.from("create"), sourceData.getAction());
-		assertMapEquals(document, sourceData.getDocument());
-		assertTrue(sourceData.getIsValid());
-		assertNotNull(sourceData.getCreatedAt());
+		assertNotNull(sourceDataResponse.getConsumedAt());
 	}
 
 	@Test
 	void getSourceDataAfterOffset() {
 		// given
-		Map<String, Object> document = new LinkedHashMap<>();
-		document.put("source", "test");
-		document.put("id", 1L);
-		SourceDataRequest sourceDataRequest = new SourceDataRequest(Action.from("create"), document);
+		Map<String, Object> data = new HashMap<>();
+		data.put("action", Action.CREATE.toString());
+		data.put("source", "hub");
+		data.put("id", "123");
+		SourceDataRequest sourceDataRequest = new SourceDataRequest(data);
 		sourceDataService.createSourceData(sourceDataRequest);
 
 		// when
@@ -74,9 +68,9 @@ class SourceDataServiceTest {
 		assertEquals(1, sourceDataResponseList.size());
 
 		SourceDataResponse sourceDataResponse = sourceDataResponseList.getFirst();
-		assertEquals(Action.from("create"), sourceDataResponse.getAction());
-		assertEquals("test", sourceDataResponse.getDocument().get("source"));
-		assertEquals(1L, ((Number) sourceDataResponse.getDocument().get("id")).longValue());
+		assertEquals(Action.CREATE.toString(), sourceDataResponse.getData().get("action"));
+		assertEquals("hub", sourceDataResponse.getData().get("source"));
+		assertEquals("123", sourceDataResponse.getData().get("id"));
 	}
 
 	// Helper method to compare maps ignoring their specific implementations

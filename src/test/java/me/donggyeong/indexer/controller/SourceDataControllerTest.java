@@ -42,10 +42,11 @@ class SourceDataControllerTest {
 	void createSourceData() throws Exception {
 		// given
 		when(sourceDataService.createSourceData(any(SourceDataRequest.class))).thenReturn(mock(SourceDataResponse.class));
-		Map<String, Object> document = new HashMap<>();
-		document.put("source", "samsungsds");
-		document.put("id", 1L);
-		SourceDataRequest sourceDataRequest = new SourceDataRequest(Action.CREATE, document);
+		Map<String, Object> data = new HashMap<>();
+		data.put("action", Action.CREATE.toString());
+		data.put("source", "hub");
+		data.put("id", "123");
+		SourceDataRequest sourceDataRequest = new SourceDataRequest(data);
 
 		// when
 		mockMvc.perform(

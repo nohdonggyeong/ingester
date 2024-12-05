@@ -18,10 +18,10 @@ public class SourceDataRepositoryCustomImpl implements SourceDataRepositoryCusto
 	private final JPAQueryFactory jpaQueryFactory;
 
 	@Override
-	public List<SourceData> findByCreatedAtAfterAndIsValidTrue(ZonedDateTime offset) {
+	public List<SourceData> findByConsumedAtAfterAndIsValidTrue(ZonedDateTime offset) {
 		return jpaQueryFactory
 			.selectFrom(sourceData)
-			.where(sourceData.createdAt.gt(offset)
+			.where(sourceData.consumedAt.gt(offset)
 				.and(sourceData.isValid.isTrue())
 			)
 			.fetch();

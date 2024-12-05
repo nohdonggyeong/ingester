@@ -18,7 +18,7 @@ public class KafkaConsumerService {
 
 	@KafkaListener(topics = "${spring.kafka.template.default-topic}", groupId = "${spring.kafka.consumer.group-id}")
 	public void consume(@Payload SourceDataRequest message, @Headers MessageHeaders messageHeaders) {
-		log.info("Received Kafka message - Action: {}, Document: {}", message.getAction().toString(), message.getDocument().toString());
+		log.info("Received Kafka message - Data: {}", message.getData().toString());
 		sourceDataService.createSourceData(message);
 	}
 }
