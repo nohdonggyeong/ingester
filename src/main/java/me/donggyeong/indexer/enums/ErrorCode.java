@@ -1,10 +1,15 @@
 package me.donggyeong.indexer.enums;
 
+import org.springframework.http.HttpStatus;
+
+import lombok.Getter;
+
+@Getter
 public enum ErrorCode {
-	INVALID_REQUEST(400, "Invalid request data"),
-	SOURCE_DATA_NOT_FOUND(404, "Source data not found"),
-	DATA_ALREADY_EXISTS(409, "Data already exists"),
-	SERVER_ERROR(500, "Internal server error");
+	BAD_REQUEST(HttpStatus.BAD_REQUEST.value(), "Bad request"),
+	NOT_FOUND(HttpStatus.NOT_FOUND.value(), "Not found"),
+	CONFLICT(HttpStatus.CONFLICT.value(), "Conflict"),
+	INTERNAL_SERVER_ERROR(HttpStatus.INTERNAL_SERVER_ERROR.value(), "Internal server error");
 
 	private final int statusCode;
 	private final String message;
@@ -14,11 +19,4 @@ public enum ErrorCode {
 		this.message = message;
 	}
 
-	public int getStatusCode() {
-		return statusCode;
-	}
-
-	public String getMessage() {
-		return message;
-	}
 }
