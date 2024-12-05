@@ -28,18 +28,18 @@ public class LatestIndicesServiceImpl implements LatestIndicesService {
 	@Override
 	@Transactional(readOnly = true)
 	public LatestIndicesResponse getLatestIndexBySource(String source) {
-		Optional<LatestIndices> optionalIndexDetails = latestIndicesRepository.findBySource(source);
-		return optionalIndexDetails.map(LatestIndicesResponse::new).orElse(null);
+		Optional<LatestIndices> latestIndicesOptional = latestIndicesRepository.findBySource(source);
+		return latestIndicesOptional.map(LatestIndicesResponse::new).orElse(null);
 	}
 
 	@Override
 	@Transactional
 	public LatestIndicesResponse updateLastIndexedAt(String source) {
-		Optional<LatestIndices> optionalIndexDetails = latestIndicesRepository.findBySource(source);
-		if (optionalIndexDetails.isEmpty()) {
+		Optional<LatestIndices> latestIndicesOptional = latestIndicesRepository.findBySource(source);
+		if (latestIndicesOptional.isEmpty()) {
 			throw new IllegalArgumentException("not found: " + source);
 		}
-		LatestIndices latestIndices = optionalIndexDetails.get();
+		LatestIndices latestIndices = latestIndicesOptional.get();
 		latestIndices.updateLastIndexedAt();
 		return new LatestIndicesResponse(latestIndices);
 	}

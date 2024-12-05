@@ -17,7 +17,7 @@ import me.donggyeong.indexer.repository.LatestIndicesRepository;
 class LatestIndicesServiceTest {
 
 	@Autowired
-	private LatestIndicesServiceImpl indexDetailsService;
+	private LatestIndicesServiceImpl latestIndicesService;
 
 	@Autowired
 	private LatestIndicesRepository latestIndicesRepository;
@@ -33,16 +33,16 @@ class LatestIndicesServiceTest {
 		String source = "testSource";
 
 		// when
-		LatestIndicesResponse response = indexDetailsService.createLatestIndex(source);
+		LatestIndicesResponse response = latestIndicesService.createLatestIndex(source);
 
 		// then
 		assertThat(response).isNotNull();
 		assertThat(response.getSource()).isEqualTo(source);
 
 		// Verify that it was saved in the repository
-		Optional<LatestIndices> savedIndexDetails = latestIndicesRepository.findBySource(source);
-		assertThat(savedIndexDetails).isPresent();
-		assertThat(savedIndexDetails.get().getSource()).isEqualTo(source);
+		Optional<LatestIndices> latestIndicesOptional = latestIndicesRepository.findBySource(source);
+		assertThat(latestIndicesOptional).isPresent();
+		assertThat(latestIndicesOptional.get().getSource()).isEqualTo(source);
 	}
 
 	@Test
@@ -52,7 +52,7 @@ class LatestIndicesServiceTest {
 		latestIndicesRepository.save(LatestIndices.builder().source(source).build());
 
 		// when
-		LatestIndicesResponse response = indexDetailsService.getLatestIndexBySource(source);
+		LatestIndicesResponse response = latestIndicesService.getLatestIndexBySource(source);
 
 		// then
 		assertThat(response).isNotNull();
@@ -65,11 +65,11 @@ class LatestIndicesServiceTest {
 		String source = "testSource";
 		LatestIndices latestIndices = LatestIndices.builder().source(source).build();
 
-		// Save the IndexDetails to the repository.
+		// Save the LatestIndices to the repository.
 		latestIndicesRepository.save(latestIndices);
 
 		// when
-		LatestIndicesResponse response = indexDetailsService.updateLastIndexedAt(source);
+		LatestIndicesResponse response = latestIndicesService.updateLastIndexedAt(source);
 
 		// then
 		assertThat(response).isNotNull();

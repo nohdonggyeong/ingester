@@ -36,9 +36,9 @@ class LatestIndicesRepositoryTest {
 		assertThat(savedLatestIndices.getSource()).isEqualTo(source);
 
 		// Verify retrieval
-		Optional<LatestIndices> retrievedIndexDetails = latestIndicesRepository.findBySource(source);
-		assertThat(retrievedIndexDetails).isPresent();
-		assertThat(retrievedIndexDetails.get().getSource()).isEqualTo(source);
+		Optional<LatestIndices> latestIndicesOptional = latestIndicesRepository.findBySource(source);
+		assertThat(latestIndicesOptional).isPresent();
+		assertThat(latestIndicesOptional.get().getSource()).isEqualTo(source);
 	}
 
 	@Test
