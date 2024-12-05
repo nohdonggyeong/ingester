@@ -1,5 +1,7 @@
 package me.donggyeong.indexer.enums;
 
+import java.util.Arrays;
+
 import com.fasterxml.jackson.annotation.JsonCreator;
 
 import lombok.Getter;
@@ -11,19 +13,17 @@ public enum Action {
 	UPDATE("update"),
 	DELETE("delete");
 
-	private final String action;
+	private final String name;
 
-	Action(String action) {
-		this.action = action;
+	Action(String name) {
+		this.name = name;
 	}
 
 	@JsonCreator
-	public static Action from(String value) {
-		for (Action action : Action.values()) {
-			if (action.getAction().equalsIgnoreCase(value)) {
-				return action;
-			}
-		}
-		throw new IllegalArgumentException("Unknown value: " + value);
+	public static Action of(String action) {
+		return Arrays.stream(Action.values())
+			.filter(i -> i.name.equals(action))
+			.findAny()
+			.orElse(null);
 	}
 }
