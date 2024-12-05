@@ -2,7 +2,9 @@ package me.donggyeong.indexer.service;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
+import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
@@ -57,6 +59,41 @@ class LatestIndicesServiceTest {
 		// then
 		assertThat(response).isNotNull();
 		assertThat(response.getSource()).isEqualTo(source);
+	}
+
+	@Test
+	void getLatestIndices() {
+		// given
+		String source1 = "testSource1";
+		String source2 = "testSource2";
+		latestIndicesRepository.save(LatestIndices.builder().source(source1).build());
+		latestIndicesRepository.save(LatestIndices.builder().source(source2).build());
+
+		// when
+		List<LatestIndicesResponse> responses = latestIndicesService.getLatestIndices();
+
+		// then
+		assertThat(responses).hasSize(2);
+		List<String> sources = responses.stream().map(LatestIndicesResponse::getSource).collect(Collectors.toList());
+		assertThat(sources).contains(source1, source2);
+	}
+
+	@Test
+	void updateLatestIndex() {
+		// given
+		String source = "testSource";
+		LatestIndices latestIndices = LatestIndices.builder().source(source).build();
+
+		// Save the LatestIndices to the repository.
+		latestIndicesRepository.save(latestIndices);
+
+		// when
+		LatestIndicesResponse response = latestIndicesService.updateLatestIndex(source);
+
+		// then
+		assertThat(response).isNotNull();
+		assertThat(response.getSource()).isEqualTo(source);
+		assertThat(response.getLatestIndex()).isNotNull();  // Verify that the latest index has been updated.
 	}
 
 	@Test
