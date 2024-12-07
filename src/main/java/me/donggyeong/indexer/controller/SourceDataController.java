@@ -20,7 +20,7 @@ public class SourceDataController {
 	private final SourceDataService sourceDataService;
 
 	@PostMapping
-	@Deprecated
+	@Deprecated(since = "v1", forRemoval = true)
 	public ResponseEntity<SourceDataResponse> createSourceData(@Valid @RequestBody SourceDataRequest sourceDataRequest) {
 		SourceDataResponse sourceDataResponse = sourceDataService.createSourceData(sourceDataRequest);
 		return ResponseEntity.status(HttpStatus.CREATED).body(sourceDataResponse);

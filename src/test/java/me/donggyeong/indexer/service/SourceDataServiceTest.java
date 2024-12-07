@@ -32,10 +32,10 @@ class SourceDataServiceTest {
 	void createSourceData() {
 		// given
 		Map<String, Object> data = new HashMap<>();
-		data.put("action", Action.CREATE.toString());
-		data.put("source", "hub");
-		data.put("id", "123");
-		SourceDataRequest sourceDataRequest = new SourceDataRequest(data);
+		data.put("category", "test-category");
+		data.put("title", "test-title");
+		data.put("description", "test-description");
+		SourceDataRequest sourceDataRequest = new SourceDataRequest(Action.CREATE, "hub", 1L, data);
 
 		// when
 		SourceDataResponse sourceDataResponse = sourceDataService.createSourceData(sourceDataRequest);
@@ -43,7 +43,6 @@ class SourceDataServiceTest {
 		// then
 		assertNotNull(sourceDataResponse);
 		assertMapEquals(data, sourceDataResponse.getData());
-		assertTrue(sourceDataResponse.getIsValid());
 		assertNotNull(sourceDataResponse.getConsumedAt());
 	}
 
@@ -51,10 +50,10 @@ class SourceDataServiceTest {
 	void getSourceDataAfterOffset() {
 		// given
 		Map<String, Object> data = new HashMap<>();
-		data.put("action", Action.CREATE.toString());
-		data.put("source", "hub");
-		data.put("id", "123");
-		SourceDataRequest sourceDataRequest = new SourceDataRequest(data);
+		data.put("category", "test-category");
+		data.put("title", "test-title");
+		data.put("description", "test-description");
+		SourceDataRequest sourceDataRequest = new SourceDataRequest(Action.CREATE, "hub", 1L, data);
 		sourceDataService.createSourceData(sourceDataRequest);
 
 		// when
@@ -66,9 +65,10 @@ class SourceDataServiceTest {
 		assertEquals(1, sourceDataResponseList.size());
 
 		SourceDataResponse sourceDataResponse = sourceDataResponseList.getFirst();
-		assertEquals(Action.CREATE.toString(), sourceDataResponse.getData().get("action"));
-		assertEquals("hub", sourceDataResponse.getData().get("source"));
-		assertEquals("123", sourceDataResponse.getData().get("id"));
+		assertEquals(Action.CREATE, sourceDataResponse.getAction());
+		assertEquals("hub", sourceDataResponse.getSource());
+		assertEquals(1L, sourceDataResponse.getDataId());
+		assertMapEquals(data, sourceDataResponse.getData());
 	}
 
 	// Helper method to compare maps ignoring their specific implementations

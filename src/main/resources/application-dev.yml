@@ -5,7 +5,7 @@ server:
 # slf4j
 logging:
   level:
-    root: DEBUG
+    root: INFO
 
 spring:
   # h2

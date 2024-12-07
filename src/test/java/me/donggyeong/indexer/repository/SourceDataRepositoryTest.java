@@ -1,6 +1,7 @@
 package me.donggyeong.indexer.repository;
 
 import me.donggyeong.indexer.config.QuerydslConfig;
+import me.donggyeong.indexer.dto.SourceDataRequest;
 import me.donggyeong.indexer.entity.SourceData;
 import me.donggyeong.indexer.enums.Action;
 
@@ -31,10 +32,13 @@ public class SourceDataRepositoryTest {
 	public void save() {
 		// given
 		Map<String, Object> data = new HashMap<>();
-		data.put("action", Action.CREATE.toString());
-		data.put("source", "hub");
-		data.put("id", "123");
+		data.put("category", "test-category");
+		data.put("title", "test-title");
+		data.put("description", "test-description");
 		SourceData sourceData = SourceData.builder()
+			.action(Action.CREATE)
+			.source("hub")
+			.dataId(1L)
 			.data(data)
 			.build();
 
@@ -45,37 +49,44 @@ public class SourceDataRepositoryTest {
 		assertThat(savedSourceData).isNotNull();
 		assertThat(savedSourceData.getId()).isNotNull();
 		assertThat(savedSourceData.getData()).isEqualTo(data);
-		assertThat(savedSourceData.getIsValid()).isTrue();
 		assertThat(savedSourceData.getConsumedAt()).isNotNull();
 	}
 
 	@Test
 	public void findByConsumedAtAfterAndIsValidTrue() {
 		// given
-		Map<String, Object> data1 = new HashMap<>();
-		data1.put("action", Action.CREATE.toString());
-		data1.put("source", "hub");
-		data1.put("id", "123");
-		Map<String, Object> data2 = new HashMap<>();
-		data2.put("action", Action.UPDATE.toString());
-		data2.put("id", "123");
+		Map<String, Object> data = new HashMap<>();
+		data.put("category", "test-category");
+		data.put("title", "test-title");
+		data.put("description", "test-description");
+
 		SourceData sourceData1 = SourceData.builder()
-			.data(data1)
+			.action(Action.CREATE)
+			.source("hub")
+			.dataId(1L)
+			.data(data)
 			.build();
+
 		SourceData sourceData2 = SourceData.builder()
-			.data(data2)
+			.action(Action.UPDATE)
+			.source("hub")
+			.dataId(2L)
+			.data(data)
 			.build();
+
 		entityManager.persist(sourceData1);
+
+		ZonedDateTime baseTime = ZonedDateTime.now();
+
 		entityManager.persist(sourceData2);
+
 		entityManager.flush();
 
 		// when
-		ZonedDateTime baseTime = ZonedDateTime.now().minusMinutes(1);
-		List<SourceData> foundSourceData = sourceDataRepository.findByConsumedAtAfterAndIsValidTrue(baseTime);
+		List<SourceData> foundSourceData = sourceDataRepository.findByConsumedAtAfter(baseTime);
 
 		// then
 		assertThat(foundSourceData).hasSize(1);
-		assertThat(foundSourceData).extracting(SourceData::getIsValid).containsOnly(true);
 		assertThat(foundSourceData).extracting(SourceData::getConsumedAt).allSatisfy(consumedAt ->
 			assertThat(consumedAt).isAfter(baseTime)
 		);

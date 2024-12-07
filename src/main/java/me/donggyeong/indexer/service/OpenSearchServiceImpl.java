@@ -26,6 +26,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import me.donggyeong.indexer.dto.SourceDataResponse;
 import me.donggyeong.indexer.enums.Action;
 import me.donggyeong.indexer.enums.ErrorCode;
 import me.donggyeong.indexer.exception.CustomException;
@@ -47,7 +48,7 @@ public class OpenSearchServiceImpl implements OpenSearchService{
 				.build();
 			return openSearchClient.indices().create(createIndexRequest);
 		} catch (IOException e) {
-			throw new CustomException(ErrorCode.INTERNAL_SERVER_ERROR);
+			throw new CustomException(ErrorCode.OPENSEARCH_OPERATION_FAILED);
 		}
 	}
 
@@ -57,7 +58,7 @@ public class OpenSearchServiceImpl implements OpenSearchService{
 			ExistsRequest existsRequest = ExistsRequest.of(r -> r.index(indexName));
 			return openSearchClient.indices().exists(existsRequest);
 		} catch (IOException e) {
-			throw new CustomException(ErrorCode.INTERNAL_SERVER_ERROR);
+			throw new CustomException(ErrorCode.OPENSEARCH_OPERATION_FAILED);
 		}
 	}
 
@@ -68,40 +69,41 @@ public class OpenSearchServiceImpl implements OpenSearchService{
 			DeleteIndexRequest deleteIndexRequest = new DeleteIndexRequest.Builder().index(indexName).build();
 			return openSearchClient.indices().delete(deleteIndexRequest);
 		} catch (IOException e) {
-			throw new CustomException(ErrorCode.INTERNAL_SERVER_ERROR);
+			throw new CustomException(ErrorCode.OPENSEARCH_OPERATION_FAILED);
 		}
 	}
 
 	@Override
 	@Transactional
-	public BulkResponse requestBulk(List<Map<String, Object>> dataList) {
+	public BulkResponse requestBulk(List<SourceDataResponse> sourceDataResponseList) {
 		try {
 			List<BulkOperation> bulkOperationList = new ArrayList<>();
 
-			for (Map<String, Object> data : dataList) {
-				Action action = Action.of(String.valueOf(data.get("action")));
-				String index = String.valueOf(data.get("index"));
-				String id = String.valueOf(data.get("id"));
+			for (SourceDataResponse sourceData : sourceDataResponseList) {
+				Action action = sourceData.getAction();
+				String alias = "alias_for_" + sourceData.getSource();
+				String id = String.valueOf(sourceData.getDataId());
+				Map<String, Object> document = sourceData.getData();
 
 				switch (action) {
 					case INDEX:
 						bulkOperationList.add(new BulkOperation.Builder().index(
-							IndexOperation.of(io -> io.index(index).id(id).document(data))
+							IndexOperation.of(io -> io.index(alias).id(id).document(document))
 						).build());
 						break;
 					case CREATE:
 						bulkOperationList.add(new BulkOperation.Builder().create(
-							CreateOperation.of(io -> io.index(index).id(id).document(data))
+							CreateOperation.of(io -> io.index(alias).id(id).document(document))
 						).build());
 						break;
 					case UPDATE:
 						bulkOperationList.add(new BulkOperation.Builder().update(
-							UpdateOperation.of(io -> io.index(index).id(id).document(data))
+							UpdateOperation.of(io -> io.index(alias).id(id).document(document))
 						).build());
 						break;
 					case DELETE:
 						bulkOperationList.add(new BulkOperation.Builder().delete(
-							DeleteOperation.of(io -> io.index(index).id(id))
+							DeleteOperation.of(io -> io.index(alias).id(id))
 						).build());
 						break;
 					default:
@@ -124,8 +126,7 @@ public class OpenSearchServiceImpl implements OpenSearchService{
 
 			return response;
 		} catch (IOException e) {
-			throw new CustomException(ErrorCode.INTERNAL_SERVER_ERROR);
+			throw new CustomException(ErrorCode.OPENSEARCH_OPERATION_FAILED);
 		}
 	}
-
 }

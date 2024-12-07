@@ -22,11 +22,7 @@ import lombok.NoArgsConstructor;
 public class LatestIndices {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	@Column(name = "id", updatable = false)
 	private Long id;
-
-	@Column(name = "source", nullable = false)
-	private String source;
 
 	@Column(name = "latest_index")
 	private String latestIndex;
@@ -37,17 +33,20 @@ public class LatestIndices {
 	@Column(name = "index_alias")
 	private String indexAlias;
 
+	@Column(name = "source", nullable = false)
+	private String source;
+
 	@Builder
 	public LatestIndices(String source) {
 		this.source = source;
-		this.indexAlias = "alias_of_" + source;
+		this.indexAlias = "alias_for_" + source;
 		updateLatestIndex();
 	}
 
 	public void updateLatestIndex() {
 		ZonedDateTime utcNow = ZonedDateTime.now(ZoneId.of("UTC"));
 		DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyyMMddHHmmssSS");
-		this.latestIndex = "index_of_" + this.source + "_" + utcNow.format(formatter);
+		this.latestIndex = "index_for_" + this.source + "_" + utcNow.format(formatter);
 	}
 
 	public void updateLastIndexedAt() {

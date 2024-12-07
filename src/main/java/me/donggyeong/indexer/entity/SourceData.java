@@ -5,11 +5,12 @@ import java.time.ZonedDateTime;
 import java.util.Map;
 
 import org.hibernate.annotations.Type;
-import org.springframework.util.ObjectUtils;
 
 import io.hypersistence.utils.hibernate.type.json.JsonType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -19,6 +20,7 @@ import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import me.donggyeong.indexer.enums.Action;
 
 @Entity
 @Table(name = "source_data")
@@ -27,15 +29,21 @@ import lombok.NoArgsConstructor;
 public class SourceData {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	@Column(name = "id", updatable = false)
 	private Long id;
 
-	@Column(name = "data", columnDefinition = "json")
+	@Column(name = "action", nullable = false)
+	@Enumerated(EnumType.STRING)
+	private Action action;
+
+	@Column(name = "source", nullable = false)
+	private String source;
+
+	@Column(name = "data_id", nullable = false)
+	private Long dataId;
+
+	@Column(name = "data", columnDefinition = "json", nullable = false)
 	@Type(JsonType.class)
 	private Map<String, Object> data;
-
-	@Column(name = "is_valid", columnDefinition = "boolean default false", nullable = false)
-	private Boolean isValid;
 
 	@Column(name = "consumed_at", updatable = false)
 	private ZonedDateTime consumedAt;
@@ -46,11 +54,10 @@ public class SourceData {
 	}
 
 	@Builder
-	public SourceData(Map<String, Object> data) {
+	public SourceData(Action action, String source, Long dataId, Map<String, Object> data) {
+		this.action = action;
+		this.source = source;
+		this.dataId = dataId;
 		this.data = data;
-		this.isValid = !ObjectUtils.isEmpty(this.data)
-			&& this.data.containsKey("action")
-			&& this.data.containsKey("source")
-			&& this.data.containsKey("id");
 	}
 }
