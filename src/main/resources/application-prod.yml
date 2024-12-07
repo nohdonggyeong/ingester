@@ -1,4 +1,16 @@
+# java -jar your_application.jar --spring.profiles.active=prod
+
+# port
+server:
+  port: 8082
+
+# slf4j
+logging:
+  level:
+    root: INFO
+
 spring:
+  # postgresql
   datasource:
     url: jdbc:postgresql://localhost:5432/central_storage
     driver-class-name: org.postgresql.Driver
@@ -9,6 +21,7 @@ spring:
     hibernate:
       ddl-auto: update
 
+  # kafka
   kafka:
     bootstrap-servers: localhost:9092,localhost:9093,localhost:9094
     template:
@@ -16,6 +29,13 @@ spring:
     consumer:
       group-id: myGroup
 
-server:
-  port: 8082
-# java -jar your-application.jar --spring.profiles.active=prod
+# opensearch
+opensearch:
+  ssl:
+    trust-store: /Users/donggyeong/develop/now/opensearch/files/cert/files/opensearch-truststore # /full/path/to/keystore
+    trust-store-password: IndexerPassword12#  # password-to-keystore
+  host: localhost
+  port: 9200
+  scheme: https
+  username: admin
+  password: IndexerPassword12#

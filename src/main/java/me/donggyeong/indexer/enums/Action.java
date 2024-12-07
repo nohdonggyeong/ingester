@@ -22,7 +22,7 @@ public enum Action {
 	@JsonCreator
 	public static Action of(String action) {
 		return Arrays.stream(Action.values())
-			.filter(i -> i.name.equals(action))
+			.filter(i -> i.name.equalsIgnoreCase(action))
 			.findAny()
 			.orElse(null);
 	}

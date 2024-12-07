@@ -1,4 +1,14 @@
+# port
+server:
+  port: 8082
+
+# slf4j
+logging:
+  level:
+    root: DEBUG
+
 spring:
+  # h2
   datasource:
     url: jdbc:h2:mem:testdb
     driver-class-name: org.h2.Driver
@@ -12,12 +22,21 @@ spring:
     console:
       enabled: true
 
+  # kafka
   kafka:
     bootstrap-servers: localhost:9092,localhost:9093,localhost:9094
     template:
       default-topic: my-topic
     consumer:
       group-id: myGroup
-      
-server:
-  port: 8082
+
+# opensearch
+opensearch:
+  ssl:
+    trust-store: /Users/donggyeong/develop/now/opensearch/files/cert/files/opensearch-truststore # /full/path/to/keystore
+    trust-store-password: IndexerPassword12#  # password-to-keystore
+  host: localhost
+  port: 9200
+  scheme: https
+  username: admin
+  password: IndexerPassword12#

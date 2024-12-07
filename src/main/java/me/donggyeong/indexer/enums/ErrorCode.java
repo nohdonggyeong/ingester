@@ -6,10 +6,7 @@ import lombok.Getter;
 
 @Getter
 public enum ErrorCode {
-	BAD_REQUEST(HttpStatus.BAD_REQUEST.value(), "Bad request"),
-	NOT_FOUND(HttpStatus.NOT_FOUND.value(), "Not found"),
-	CONFLICT(HttpStatus.CONFLICT.value(), "Conflict"),
-	INTERNAL_SERVER_ERROR(HttpStatus.INTERNAL_SERVER_ERROR.value(), "Internal server error");
+	INTERNAL_SERVER_ERROR(HttpStatus.INTERNAL_SERVER_ERROR.value(), "An internal server error has occurred.");
 
 	private final int statusCode;
 	private final String message;
@@ -18,5 +15,4 @@ public enum ErrorCode {
 		this.statusCode = statusCode;
 		this.message = message;
 	}
-
 }
