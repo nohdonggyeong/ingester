@@ -10,6 +10,8 @@ import org.springframework.transaction.annotation.Transactional;
 import lombok.RequiredArgsConstructor;
 import me.donggyeong.indexer.dto.LatestIndicesResponse;
 import me.donggyeong.indexer.entity.LatestIndices;
+import me.donggyeong.indexer.enums.ErrorCode;
+import me.donggyeong.indexer.exception.CustomException;
 import me.donggyeong.indexer.repository.LatestIndicesRepository;
 
 @Service
@@ -48,7 +50,7 @@ public class LatestIndicesServiceImpl implements LatestIndicesService {
 	public LatestIndicesResponse updateLatestIndex(String source) {
 		Optional<LatestIndices> latestIndicesOptional = latestIndicesRepository.findBySource(source);
 		if (latestIndicesOptional.isEmpty()) {
-			throw new IllegalArgumentException("not found: " + source);
+			throw new CustomException(ErrorCode.NOT_FOUND_LATEST_INDICES);
 		}
 		LatestIndices latestIndices = latestIndicesOptional.get();
 		latestIndices.updateLatestIndex();
@@ -61,7 +63,7 @@ public class LatestIndicesServiceImpl implements LatestIndicesService {
 	public LatestIndicesResponse updateLastIndexedAt(String source) {
 		Optional<LatestIndices> latestIndicesOptional = latestIndicesRepository.findBySource(source);
 		if (latestIndicesOptional.isEmpty()) {
-			throw new IllegalArgumentException("not found: " + source);
+			throw new CustomException(ErrorCode.NOT_FOUND_LATEST_INDICES);
 		}
 		LatestIndices latestIndices = latestIndicesOptional.get();
 		latestIndices.updateLastIndexedAt();

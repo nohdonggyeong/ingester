@@ -3,6 +3,7 @@ package me.donggyeong.indexer.service;
 import static org.junit.jupiter.api.Assertions.*;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -18,6 +19,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
 import lombok.extern.slf4j.Slf4j;
+import me.donggyeong.indexer.dto.SourceDataRequest;
+import me.donggyeong.indexer.dto.SourceDataResponse;
 import me.donggyeong.indexer.enums.Action;
 
 @SpringBootTest
@@ -63,50 +66,39 @@ class OpenSearchServiceTest {
 	@Test
 	void requestBulk() {
 		// Given
-		List<Map<String, Object>> dataList = new ArrayList<>();
+		List<SourceDataResponse> sourceDataResponseList = new ArrayList<>();
 
 		// 인덱싱할 문서 추가
-		Map<String, Object> indexData = Map.of(
-			"action", Action.INDEX.name(),
-			"source", "hub",
-			"id", 1L,
-			"title", "index document"
-		);
-		dataList.add(indexData);
+		Map<String, Object> indexData = new HashMap<>();
+		indexData.put("category", "test-category");
+		indexData.put("title", "test-title");
+		indexData.put("description", "test-description");
+		sourceDataResponseList.add(new SourceDataResponse(Action.INDEX, "hub", 1L, indexData, null));
 
 		// 생성할 문서 추가
-		Map<String, Object> createData = Map.of(
-			"action", Action.CREATE.name(),
-			"source", "hub",
-			"id", 2L,
-			"title", "create document"
-		);
-		dataList.add(createData);
+		Map<String, Object> createData = new HashMap<>();
+		createData.put("category", "test-category");
+		createData.put("title", "test-title");
+		createData.put("description", "test-description");
+		sourceDataResponseList.add(new SourceDataResponse(Action.CREATE, "hub", 2L, createData, null));
 
 		// 업데이트할 문서 추가
-		Map<String, Object> updateData = Map.of(
-			"action", Action.UPDATE.name(),
-			"source", "hub",
-			"id", 1L,
-			"title", "update document"
-		);
-		dataList.add(updateData);
+		Map<String, Object> updateData = new HashMap<>();
+		updateData.put("category", "test-updated-category");
+		updateData.put("title", "test-updated-title");
+		updateData.put("description", "test-updated-description");
+		sourceDataResponseList.add(new SourceDataResponse(Action.UPDATE, "hub", 1L, updateData, null));
 
 		// 삭제할 문서 추가
-		Map<String, Object> deleteData = Map.of(
-			"action", Action.DELETE.name(),
-			"source", "hub",
-			"id", 2L
-		);
-		dataList.add(deleteData);
+		sourceDataResponseList.add(new SourceDataResponse(Action.DELETE, "hub", 2L, null, null));
 
 		// When
-		BulkResponse bulkResponse = openSearchService.requestBulk(dataList);
+		BulkResponse bulkResponse = openSearchService.requestBulk(sourceDataResponseList);
 
 		// Then
 		assertAll(
 			() -> assertNotNull(bulkResponse),
-			() -> assertEquals(dataList.size(), bulkResponse.items().size()),
+			() -> assertEquals(sourceDataResponseList.size(), bulkResponse.items().size()),
 			() -> assertTrue(bulkResponse.items().stream().allMatch(item -> item.error() == null)),
 			() -> log.debug("Bulk operation completed successfully with response: {}", bulkResponse)
 		);

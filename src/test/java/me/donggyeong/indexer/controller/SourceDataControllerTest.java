@@ -42,10 +42,10 @@ class SourceDataControllerTest {
 		// given
 		when(sourceDataService.createSourceData(any(SourceDataRequest.class))).thenReturn(mock(SourceDataResponse.class));
 		Map<String, Object> data = new HashMap<>();
-		data.put("action", Action.CREATE.toString());
-		data.put("source", "hub");
-		data.put("id", "123");
-		SourceDataRequest sourceDataRequest = new SourceDataRequest(data);
+		data.put("category", "test-category");
+		data.put("title", "test-title");
+		data.put("description", "test-description");
+		SourceDataRequest sourceDataRequest = new SourceDataRequest(Action.CREATE, "hub", 1L, data);
 
 		// when
 		mockMvc.perform(
