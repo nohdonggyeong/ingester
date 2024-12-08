@@ -1,5 +1,6 @@
 package me.donggyeong.indexer.service;
 
+import java.time.ZonedDateTime;
 import java.util.List;
 
 import me.donggyeong.indexer.dto.LatestIndicesResponse;
@@ -10,4 +11,5 @@ public interface LatestIndicesService {
 	List<LatestIndicesResponse> getLatestIndices();
 	LatestIndicesResponse updateLatestIndex(String source);
 	LatestIndicesResponse updateLastIndexedAt(String source);
+	ZonedDateTime getLatestOrDefaultIndexedTime();
 }

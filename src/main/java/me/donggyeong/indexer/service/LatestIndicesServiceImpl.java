@@ -1,5 +1,7 @@
 package me.donggyeong.indexer.service;
 
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -10,6 +12,8 @@ import org.springframework.transaction.annotation.Transactional;
 import lombok.RequiredArgsConstructor;
 import me.donggyeong.indexer.dto.LatestIndicesResponse;
 import me.donggyeong.indexer.entity.LatestIndices;
+import me.donggyeong.indexer.enums.ErrorCode;
+import me.donggyeong.indexer.exception.CustomException;
 import me.donggyeong.indexer.repository.LatestIndicesRepository;
 
 @Service
@@ -48,7 +52,7 @@ public class LatestIndicesServiceImpl implements LatestIndicesService {
 	public LatestIndicesResponse updateLatestIndex(String source) {
 		Optional<LatestIndices> latestIndicesOptional = latestIndicesRepository.findBySource(source);
 		if (latestIndicesOptional.isEmpty()) {
-			throw new IllegalArgumentException("not found: " + source);
+			throw new CustomException(ErrorCode.NOT_FOUND_LATEST_INDICES);
 		}
 		LatestIndices latestIndices = latestIndicesOptional.get();
 		latestIndices.updateLatestIndex();
@@ -61,10 +65,21 @@ public class LatestIndicesServiceImpl implements LatestIndicesService {
 	public LatestIndicesResponse updateLastIndexedAt(String source) {
 		Optional<LatestIndices> latestIndicesOptional = latestIndicesRepository.findBySource(source);
 		if (latestIndicesOptional.isEmpty()) {
-			throw new IllegalArgumentException("not found: " + source);
+			throw new CustomException(ErrorCode.NOT_FOUND_LATEST_INDICES);
 		}
 		LatestIndices latestIndices = latestIndicesOptional.get();
 		latestIndices.updateLastIndexedAt();
 		return new LatestIndicesResponse(latestIndices);
+	}
+
+	@Override
+	@Transactional(readOnly = true)
+	public ZonedDateTime getLatestOrDefaultIndexedTime() {
+		Optional<ZonedDateTime> optionalZonedDateTime = latestIndicesRepository.findLatestByLastIndexedAt();
+		return optionalZonedDateTime.orElse(
+			ZonedDateTime.of(
+				1970, 1, 1, 0, 0, 0, 0, ZoneId.of("UTC")
+			)
+		);
 	}
 }
