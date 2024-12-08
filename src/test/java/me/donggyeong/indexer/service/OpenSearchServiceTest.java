@@ -23,7 +23,6 @@ import org.springframework.boot.test.context.SpringBootTest;
 import lombok.extern.slf4j.Slf4j;
 import me.donggyeong.indexer.dto.IndexingItemResponse;
 import me.donggyeong.indexer.enums.Action;
-import me.donggyeong.indexer.enums.Status;
 
 @SpringBootTest
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
