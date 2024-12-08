@@ -1,7 +1,6 @@
 package me.donggyeong.indexer.service;
 
 import java.util.List;
-import java.util.Map;
 
 import org.opensearch.client.opensearch.core.BulkResponse;
 import org.opensearch.client.opensearch.indices.CreateIndexResponse;

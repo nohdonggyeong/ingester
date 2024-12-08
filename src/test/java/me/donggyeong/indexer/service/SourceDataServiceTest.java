@@ -2,6 +2,8 @@ package me.donggyeong.indexer.service;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -49,6 +51,7 @@ class SourceDataServiceTest {
 	@Test
 	void getSourceDataAfterOffset() {
 		// given
+		ZonedDateTime offsetTime = ZonedDateTime.now(ZoneId.of("UTC"));
 		Map<String, Object> data = new HashMap<>();
 		data.put("category", "test-category");
 		data.put("title", "test-title");
@@ -57,7 +60,7 @@ class SourceDataServiceTest {
 		sourceDataService.createSourceData(sourceDataRequest);
 
 		// when
-		List<SourceDataResponse> sourceDataResponseList = sourceDataService.getSourceDataAfterOffset();
+		List<SourceDataResponse> sourceDataResponseList = sourceDataService.getSourceDataAfterOffset(offsetTime);
 
 		// then
 		assertNotNull(sourceDataResponseList);

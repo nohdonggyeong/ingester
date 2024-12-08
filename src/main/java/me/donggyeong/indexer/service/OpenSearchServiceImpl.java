@@ -3,7 +3,6 @@ package me.donggyeong.indexer.service;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 import org.opensearch.client.opensearch.OpenSearchClient;
 import org.opensearch.client.opensearch._types.Refresh;
@@ -14,19 +13,23 @@ import org.opensearch.client.opensearch.core.bulk.CreateOperation;
 import org.opensearch.client.opensearch.core.bulk.DeleteOperation;
 import org.opensearch.client.opensearch.core.bulk.IndexOperation;
 import org.opensearch.client.opensearch.core.bulk.UpdateOperation;
+import org.opensearch.client.opensearch.indices.Alias;
 import org.opensearch.client.opensearch.indices.CreateIndexRequest;
 import org.opensearch.client.opensearch.indices.CreateIndexRequest.Builder;
 import org.opensearch.client.opensearch.indices.CreateIndexResponse;
 import org.opensearch.client.opensearch.indices.DeleteIndexRequest;
 import org.opensearch.client.opensearch.indices.DeleteIndexResponse;
 import org.opensearch.client.opensearch.indices.ExistsRequest;
+import org.opensearch.client.opensearch.indices.IndexSettings;
 import org.opensearch.client.transport.endpoints.BooleanResponse;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import me.donggyeong.indexer.dto.LatestIndicesResponse;
 import me.donggyeong.indexer.dto.SourceDataResponse;
+import me.donggyeong.indexer.entity.LatestIndices;
 import me.donggyeong.indexer.enums.Action;
 import me.donggyeong.indexer.enums.ErrorCode;
 import me.donggyeong.indexer.exception.CustomException;
@@ -43,10 +46,22 @@ public class OpenSearchServiceImpl implements OpenSearchService{
 	@Transactional
 	public CreateIndexResponse createIndex(String index) {
 		try {
+			IndexSettings settings = new IndexSettings.Builder()
+				.numberOfShards("2")
+				.numberOfReplicas("1")
+				.build();
+
 			CreateIndexRequest createIndexRequest = new Builder()
 				.index(index)
+				.settings(settings)
+				.aliases("alias_for_" + index, new Alias.Builder()
+					.isWriteIndex(true)
+					.build())
 				.build();
+
 			return openSearchClient.indices().create(createIndexRequest);
+			// latestIndicesService.createLatestIndex()
+			// TODO: CREATE latest_indices
 		} catch (IOException e) {
 			throw new CustomException(ErrorCode.OPENSEARCH_OPERATION_FAILED);
 		}
@@ -80,30 +95,48 @@ public class OpenSearchServiceImpl implements OpenSearchService{
 			List<BulkOperation> bulkOperationList = new ArrayList<>();
 
 			for (SourceDataResponse sourceData : sourceDataResponseList) {
-				Action action = sourceData.getAction();
-				String alias = "alias_for_" + sourceData.getSource();
-				String id = String.valueOf(sourceData.getDataId());
-				Map<String, Object> document = sourceData.getData();
+				String source = sourceData.getSource();
+				LatestIndicesResponse latestIndicesResponse = latestIndicesService.getLatestIndexBySource(source);
+				if (latestIndicesResponse == null) {
+					// createIndex(source);
+					latestIndicesResponse = latestIndicesService.getLatestIndexBySource(source);
+				}
+				String alias = latestIndicesResponse.getIndexAlias();
 
-				switch (action) {
+				switch (sourceData.getAction()) {
 					case INDEX:
 						bulkOperationList.add(new BulkOperation.Builder().index(
-							IndexOperation.of(io -> io.index(alias).id(id).document(document))
+							IndexOperation.of(io -> io
+								.index(alias)
+								.id(String.valueOf(sourceData.getDataId()))
+								.document(sourceData.getData())
+							)
 						).build());
 						break;
 					case CREATE:
 						bulkOperationList.add(new BulkOperation.Builder().create(
-							CreateOperation.of(io -> io.index(alias).id(id).document(document))
+							CreateOperation.of(io -> io
+								.index(alias)
+								.id(String.valueOf(sourceData.getDataId()))
+								.document(sourceData.getData())
+							)
 						).build());
 						break;
 					case UPDATE:
 						bulkOperationList.add(new BulkOperation.Builder().update(
-							UpdateOperation.of(io -> io.index(alias).id(id).document(document))
+							UpdateOperation.of(io -> io
+								.index(alias)
+								.id(String.valueOf(sourceData.getDataId()))
+								.document(sourceData.getData())
+							)
 						).build());
 						break;
 					case DELETE:
 						bulkOperationList.add(new BulkOperation.Builder().delete(
-							DeleteOperation.of(io -> io.index(alias).id(id))
+							DeleteOperation.of(io -> io
+								.index(alias)
+								.id(String.valueOf(sourceData.getDataId()))
+							)
 						).build());
 						break;
 					default:

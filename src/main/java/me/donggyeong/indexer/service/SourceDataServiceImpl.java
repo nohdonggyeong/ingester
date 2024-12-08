@@ -29,9 +29,8 @@ public class SourceDataServiceImpl implements SourceDataService {
 	}
 
 	@Override
-	public List<SourceDataResponse> getSourceDataAfterOffset() {
-		// TODO: Modify offset to lastBulkRequestedTime
-		return sourceDataRepository.findByConsumedAtAfter(ZonedDateTime.now().minusMinutes(1))
+	public List<SourceDataResponse> getSourceDataAfterOffset(ZonedDateTime latestIndexedTime) {
+		return sourceDataRepository.findByConsumedAtAfter(latestIndexedTime)
 			.stream()
 			.map(SourceDataResponse::new)
 			.collect(Collectors.toList());

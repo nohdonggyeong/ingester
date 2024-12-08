@@ -8,6 +8,6 @@ import org.springframework.stereotype.Repository;
 import me.donggyeong.indexer.entity.LatestIndices;
 
 @Repository
-public interface LatestIndicesRepository extends JpaRepository<LatestIndices, Long> {
+public interface LatestIndicesRepository extends JpaRepository<LatestIndices, Long>, LatestIndicesRepositoryCustom {
 	Optional<LatestIndices> findBySource(String source);
 }

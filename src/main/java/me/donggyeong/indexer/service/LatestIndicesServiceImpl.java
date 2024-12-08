@@ -1,5 +1,7 @@
 package me.donggyeong.indexer.service;
 
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -68,5 +70,16 @@ public class LatestIndicesServiceImpl implements LatestIndicesService {
 		LatestIndices latestIndices = latestIndicesOptional.get();
 		latestIndices.updateLastIndexedAt();
 		return new LatestIndicesResponse(latestIndices);
+	}
+
+	@Override
+	@Transactional(readOnly = true)
+	public ZonedDateTime getLatestOrDefaultIndexedTime() {
+		Optional<ZonedDateTime> optionalZonedDateTime = latestIndicesRepository.findLatestByLastIndexedAt();
+		return optionalZonedDateTime.orElse(
+			ZonedDateTime.of(
+				1970, 1, 1, 0, 0, 0, 0, ZoneId.of("UTC")
+			)
+		);
 	}
 }

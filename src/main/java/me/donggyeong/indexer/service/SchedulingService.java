@@ -1,7 +1,9 @@
 package me.donggyeong.indexer.service;
 
+import java.time.ZonedDateTime;
 import java.util.List;
 
+import org.opensearch.client.opensearch.core.BulkResponse;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
@@ -11,13 +13,15 @@ import me.donggyeong.indexer.dto.SourceDataResponse;
 @Service
 @RequiredArgsConstructor
 public class SchedulingService {
+	private final LatestIndicesService latestIndicesService;
 	private final SourceDataService sourceDataService;
+	private final OpenSearchService openSearchService;
 
 	@Scheduled(cron = "0/10 * * * * ?")
 	public void scheduleIndexing() {
-		List<SourceDataResponse> sourceDataResponseList = sourceDataService.getSourceDataAfterOffset();
-		for (SourceDataResponse sourceDataResponse : sourceDataResponseList) {
-			// TODO: Request indexing to OpenSearch client
-		}
+		ZonedDateTime latestIndexedTime = latestIndicesService.getLatestOrDefaultIndexedTime();
+		List<SourceDataResponse> sourceDataResponseList = sourceDataService.getSourceDataAfterOffset(latestIndexedTime);
+		BulkResponse bulkResponse = openSearchService.requestBulk(sourceDataResponseList);
+		// TODO: CREATE indexing_result
 	}
 }
