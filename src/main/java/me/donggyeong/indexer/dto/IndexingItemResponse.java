@@ -17,7 +17,6 @@ public class IndexingItemResponse {
 	private Long documentId;
 	private Map<String, Object> documentBody;
 	private ZonedDateTime consumedAt;
-	private Status status;
 
 	public IndexingItemResponse(IndexingItem indexingItem) {
 		this.action = indexingItem.getAction();
@@ -25,6 +24,5 @@ public class IndexingItemResponse {
 		this.documentId = indexingItem.getDocumentId();
 		this.documentBody = indexingItem.getDocumentBody();
 		this.consumedAt = indexingItem.getConsumedAt();
-		this.status = indexingItem.getStatus();
 	}
 }

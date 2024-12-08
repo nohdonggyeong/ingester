@@ -81,8 +81,7 @@ class OpenSearchServiceTest {
 				"blog",
 				1L,
 				indexDocumentBody,
-				ZonedDateTime.now(ZoneId.of("UTC")),
-				Status.PENDING
+				ZonedDateTime.now(ZoneId.of("UTC"))
 			)
 		);
 
@@ -97,8 +96,7 @@ class OpenSearchServiceTest {
 				"blog",
 				2L,
 				createDocumentBody,
-				ZonedDateTime.now(ZoneId.of("UTC")),
-				Status.PENDING
+				ZonedDateTime.now(ZoneId.of("UTC"))
 			)
 		);
 
@@ -113,8 +111,7 @@ class OpenSearchServiceTest {
 				"blog",
 				1L,
 				updateDocumentBody,
-				ZonedDateTime.now(ZoneId.of("UTC")),
-				Status.PENDING
+				ZonedDateTime.now(ZoneId.of("UTC"))
 			)
 		);
 
@@ -125,8 +122,7 @@ class OpenSearchServiceTest {
 				"blog",
 				2L,
 				null,
-				ZonedDateTime.now(ZoneId.of("UTC")),
-				Status.PENDING
+				ZonedDateTime.now(ZoneId.of("UTC"))
 			)
 		);
 

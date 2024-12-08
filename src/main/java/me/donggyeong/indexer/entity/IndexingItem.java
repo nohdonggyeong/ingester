@@ -50,13 +50,9 @@ public class IndexingItem {
 	@Column(name = "consumed_at", nullable = false, updatable = false)
 	private ZonedDateTime consumedAt;
 
-	@Column(name = "status", nullable = false)
-	private Status status;
-
 	@PrePersist
 	protected void onCreate() {
 		this.consumedAt = ZonedDateTime.now(ZoneId.of("UTC"));
-		this.status = Status.PENDING;
 	}
 
 	@Builder
@@ -65,9 +61,5 @@ public class IndexingItem {
 		this.targetName = targetName;
 		this.documentId = documentId;
 		this.documentBody = documentBody;
-	}
-
-	public void updateStatus(Status status) {
-		this.status = status;
 	}
 }
