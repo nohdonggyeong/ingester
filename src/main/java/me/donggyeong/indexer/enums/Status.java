@@ -8,9 +8,8 @@ import lombok.Getter;
 
 @Getter
 public enum Status {
-	PENDING("pending"),
-	PROCESSED("processed"),
-	FAILED("failed");
+	OPEN("open"),
+	CLOSE("close");
 
 	private final String name;
 

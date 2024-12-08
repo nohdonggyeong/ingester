@@ -2,7 +2,6 @@ package me.donggyeong.indexer.entity;
 
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
-import java.time.format.DateTimeFormatter;
 import java.util.Map;
 
 import org.hibernate.annotations.Type;
@@ -22,7 +21,6 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import me.donggyeong.indexer.enums.Action;
-import me.donggyeong.indexer.enums.Status;
 
 @Entity
 @Table(name = "indexing_item")
