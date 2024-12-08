@@ -1,7 +1,6 @@
 package me.donggyeong.indexer.repository;
 
 import static me.donggyeong.indexer.entity.QLatestIndices.*;
-import static me.donggyeong.indexer.entity.QSourceData.*;
 
 import java.time.ZonedDateTime;
 import java.util.List;

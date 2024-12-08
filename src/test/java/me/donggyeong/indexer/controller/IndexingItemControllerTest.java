@@ -17,45 +17,46 @@ import org.springframework.web.util.UriComponentsBuilder;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-import me.donggyeong.indexer.dto.SourceDataRequest;
-import me.donggyeong.indexer.dto.SourceDataResponse;
+import me.donggyeong.indexer.dto.IndexingItemRequest;
+import me.donggyeong.indexer.dto.IndexingItemResponse;
 import me.donggyeong.indexer.enums.Action;
-import me.donggyeong.indexer.service.SourceDataService;
+import me.donggyeong.indexer.service.IndexingItemService;
 
-@WebMvcTest(SourceDataController.class)
-class SourceDataControllerTest {
+@WebMvcTest(IndexingItemController.class)
+class IndexingItemControllerTest {
 	@Autowired
 	private MockMvc mockMvc;
 
 	@MockBean
-	private SourceDataService sourceDataService;
+	private IndexingItemService indexingItemService;
 
 	@Autowired
 	private ObjectMapper objectMapper;
 
-	private static final String API_BASE_PATH = "/api/v1/source-data";
+	private static final String API_BASE_PATH = "/api/v1/indexing-item";
 	private static final String JSON_ROOT_PATH = "$";
 	private static final String JSON_FIRST_ELEMENT_PATH = "$[0]";
 
 	@Test
-	void createSourceData() throws Exception {
+	void saveIndexingItem() throws Exception {
 		// given
-		when(sourceDataService.createSourceData(any(SourceDataRequest.class))).thenReturn(mock(SourceDataResponse.class));
-		Map<String, Object> data = new HashMap<>();
-		data.put("category", "test-category");
-		data.put("title", "test-title");
-		data.put("description", "test-description");
-		SourceDataRequest sourceDataRequest = new SourceDataRequest(Action.CREATE, "hub", 1L, data);
+		when(indexingItemService.saveIndexingItem(any(IndexingItemRequest.class))).thenReturn(mock(IndexingItemResponse.class));
+		IndexingItemRequest indexingItemRequest = new IndexingItemRequest(
+			Action.CREATE,
+			"blog",
+			1L,
+			Map.of("category", "test-category", "title", "test-title", "description", "test-description")
+		);
 
 		// when
 		mockMvc.perform(
 			post(UriComponentsBuilder.fromPath(API_BASE_PATH).toUriString())
 				.contentType(MediaType.APPLICATION_JSON)
-				.content(objectMapper.writeValueAsString(sourceDataRequest))
+				.content(objectMapper.writeValueAsString(indexingItemRequest))
 		)
 		// then
 			.andExpect(status().isCreated())
 			.andExpect(jsonPath(JSON_ROOT_PATH).isNotEmpty());
-		verify(sourceDataService, times(1)).createSourceData(any(SourceDataRequest.class));
+		verify(indexingItemService, times(1)).saveIndexingItem(any(IndexingItemRequest.class));
 	}
 }

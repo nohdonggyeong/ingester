@@ -8,20 +8,20 @@ import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
 import lombok.RequiredArgsConstructor;
-import me.donggyeong.indexer.dto.SourceDataResponse;
+import me.donggyeong.indexer.dto.IndexingItemResponse;
 
 @Service
 @RequiredArgsConstructor
 public class SchedulingService {
 	private final LatestIndicesService latestIndicesService;
-	private final SourceDataService sourceDataService;
+	private final IndexingItemService indexingItemService;
 	private final OpenSearchService openSearchService;
 
 	@Scheduled(cron = "0/10 * * * * ?")
 	public void scheduleIndexing() {
 		ZonedDateTime latestIndexedTime = latestIndicesService.getLatestOrDefaultIndexedTime();
-		List<SourceDataResponse> sourceDataResponseList = sourceDataService.getSourceDataAfterOffset(latestIndexedTime);
-		BulkResponse bulkResponse = openSearchService.requestBulk(sourceDataResponseList);
+		List<IndexingItemResponse> indexingItemResponseList = indexingItemService.findIndexingItemAfter(latestIndexedTime);
+		BulkResponse bulkResponse = openSearchService.requestBulk(indexingItemResponseList);
 		// TODO: CREATE indexing_result
 	}
 }

@@ -2,6 +2,7 @@ package me.donggyeong.indexer.entity;
 
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.Map;
 
 import org.hibernate.annotations.Type;
@@ -21,12 +22,13 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import me.donggyeong.indexer.enums.Action;
+import me.donggyeong.indexer.enums.Status;
 
 @Entity
-@Table(name = "source_data")
+@Table(name = "indexing_item")
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Getter
-public class SourceData {
+public class IndexingItem {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
@@ -35,29 +37,37 @@ public class SourceData {
 	@Enumerated(EnumType.STRING)
 	private Action action;
 
-	@Column(name = "source", nullable = false)
-	private String source;
+	@Column(name = "target_name", nullable = false)
+	private String targetName;
 
-	@Column(name = "data_id", nullable = false)
-	private Long dataId;
+	@Column(name = "document_id", nullable = false)
+	private Long documentId;
 
-	@Column(name = "data", columnDefinition = "json", nullable = false)
+	@Column(name = "document_body", nullable = false, columnDefinition = "json")
 	@Type(JsonType.class)
-	private Map<String, Object> data;
+	private Map<String, Object> documentBody;
 
-	@Column(name = "consumed_at", updatable = false)
+	@Column(name = "consumed_at", nullable = false, updatable = false)
 	private ZonedDateTime consumedAt;
+
+	@Column(name = "status", nullable = false)
+	private Status status;
 
 	@PrePersist
 	protected void onCreate() {
 		this.consumedAt = ZonedDateTime.now(ZoneId.of("UTC"));
+		this.status = Status.PENDING;
 	}
 
 	@Builder
-	public SourceData(Action action, String source, Long dataId, Map<String, Object> data) {
+	public IndexingItem(Action action, String targetName, Long documentId, Map<String, Object> documentBody) {
 		this.action = action;
-		this.source = source;
-		this.dataId = dataId;
-		this.data = data;
+		this.targetName = targetName;
+		this.documentId = documentId;
+		this.documentBody = documentBody;
+	}
+
+	public void updateStatus(Status status) {
+		this.status = status;
 	}
 }

@@ -2,6 +2,8 @@ package me.donggyeong.indexer.service;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -19,8 +21,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
 import lombok.extern.slf4j.Slf4j;
-import me.donggyeong.indexer.dto.SourceDataResponse;
+import me.donggyeong.indexer.dto.IndexingItemResponse;
 import me.donggyeong.indexer.enums.Action;
+import me.donggyeong.indexer.enums.Status;
 
 @SpringBootTest
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
@@ -65,39 +68,75 @@ class OpenSearchServiceTest {
 	@Test
 	void requestBulk() {
 		// Given
-		List<SourceDataResponse> sourceDataResponseList = new ArrayList<>();
+		List<IndexingItemResponse> indexingItemResponseList = new ArrayList<>();
 
 		// 인덱싱할 문서 추가
-		Map<String, Object> indexData = new HashMap<>();
-		indexData.put("category", "test-category");
-		indexData.put("title", "test-title");
-		indexData.put("description", "test-description");
-		sourceDataResponseList.add(new SourceDataResponse(Action.INDEX, "hub", 1L, indexData, null));
+		Map<String, Object> indexDocumentBody = new HashMap<>();
+		indexDocumentBody.put("category", "test-index-category");
+		indexDocumentBody.put("title", "test-index-title");
+		indexDocumentBody.put("description", "test-index-description");
+		indexingItemResponseList.add(
+			new IndexingItemResponse(
+				Action.INDEX,
+				"blog",
+				1L,
+				indexDocumentBody,
+				ZonedDateTime.now(ZoneId.of("UTC")),
+				Status.PENDING
+			)
+		);
 
 		// 생성할 문서 추가
-		Map<String, Object> createData = new HashMap<>();
-		createData.put("category", "test-category");
-		createData.put("title", "test-title");
-		createData.put("description", "test-description");
-		sourceDataResponseList.add(new SourceDataResponse(Action.CREATE, "hub", 2L, createData, null));
+		Map<String, Object> createDocumentBody = new HashMap<>();
+		createDocumentBody.put("category", "test-create-category");
+		createDocumentBody.put("title", "test-create-title");
+		createDocumentBody.put("description", "test-create-description");
+		indexingItemResponseList.add(
+			new IndexingItemResponse(
+				Action.CREATE,
+				"blog",
+				2L,
+				createDocumentBody,
+				ZonedDateTime.now(ZoneId.of("UTC")),
+				Status.PENDING
+			)
+		);
 
 		// 업데이트할 문서 추가
-		Map<String, Object> updateData = new HashMap<>();
-		updateData.put("category", "test-updated-category");
-		updateData.put("title", "test-updated-title");
-		updateData.put("description", "test-updated-description");
-		sourceDataResponseList.add(new SourceDataResponse(Action.UPDATE, "hub", 1L, updateData, null));
+		Map<String, Object> updateDocumentBody = new HashMap<>();
+		updateDocumentBody.put("category", "test-update-category");
+		updateDocumentBody.put("title", "test-update-title");
+		updateDocumentBody.put("description", "test-update-description");
+		indexingItemResponseList.add(
+			new IndexingItemResponse(
+				Action.UPDATE,
+				"blog",
+				1L,
+				updateDocumentBody,
+				ZonedDateTime.now(ZoneId.of("UTC")),
+				Status.PENDING
+			)
+		);
 
 		// 삭제할 문서 추가
-		sourceDataResponseList.add(new SourceDataResponse(Action.DELETE, "hub", 2L, null, null));
+		indexingItemResponseList.add(
+			new IndexingItemResponse(
+				Action.DELETE,
+				"blog",
+				2L,
+				null,
+				ZonedDateTime.now(ZoneId.of("UTC")),
+				Status.PENDING
+			)
+		);
 
 		// When
-		BulkResponse bulkResponse = openSearchService.requestBulk(sourceDataResponseList);
+		BulkResponse bulkResponse = openSearchService.requestBulk(indexingItemResponseList);
 
 		// Then
 		assertAll(
 			() -> assertNotNull(bulkResponse),
-			() -> assertEquals(sourceDataResponseList.size(), bulkResponse.items().size()),
+			() -> assertEquals(indexingItemResponseList.size(), bulkResponse.items().size()),
 			() -> assertTrue(bulkResponse.items().stream().allMatch(item -> item.error() == null)),
 			() -> log.debug("Bulk operation completed successfully with response: {}", bulkResponse)
 		);

@@ -28,9 +28,7 @@ import org.springframework.transaction.annotation.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import me.donggyeong.indexer.dto.LatestIndicesResponse;
-import me.donggyeong.indexer.dto.SourceDataResponse;
-import me.donggyeong.indexer.entity.LatestIndices;
-import me.donggyeong.indexer.enums.Action;
+import me.donggyeong.indexer.dto.IndexingItemResponse;
 import me.donggyeong.indexer.enums.ErrorCode;
 import me.donggyeong.indexer.exception.CustomException;
 
@@ -90,12 +88,12 @@ public class OpenSearchServiceImpl implements OpenSearchService{
 
 	@Override
 	@Transactional
-	public BulkResponse requestBulk(List<SourceDataResponse> sourceDataResponseList) {
+	public BulkResponse requestBulk(List<IndexingItemResponse> indexingItemResponseList) {
 		try {
 			List<BulkOperation> bulkOperationList = new ArrayList<>();
 
-			for (SourceDataResponse sourceData : sourceDataResponseList) {
-				String source = sourceData.getSource();
+			for (IndexingItemResponse sourceData : indexingItemResponseList) {
+				String source = sourceData.getTargetName();
 				LatestIndicesResponse latestIndicesResponse = latestIndicesService.getLatestIndexBySource(source);
 				if (latestIndicesResponse == null) {
 					// createIndex(source);
@@ -108,8 +106,8 @@ public class OpenSearchServiceImpl implements OpenSearchService{
 						bulkOperationList.add(new BulkOperation.Builder().index(
 							IndexOperation.of(io -> io
 								.index(alias)
-								.id(String.valueOf(sourceData.getDataId()))
-								.document(sourceData.getData())
+								.id(String.valueOf(sourceData.getDocumentId()))
+								.document(sourceData.getDocumentBody())
 							)
 						).build());
 						break;
@@ -117,8 +115,8 @@ public class OpenSearchServiceImpl implements OpenSearchService{
 						bulkOperationList.add(new BulkOperation.Builder().create(
 							CreateOperation.of(io -> io
 								.index(alias)
-								.id(String.valueOf(sourceData.getDataId()))
-								.document(sourceData.getData())
+								.id(String.valueOf(sourceData.getDocumentId()))
+								.document(sourceData.getDocumentBody())
 							)
 						).build());
 						break;
@@ -126,8 +124,8 @@ public class OpenSearchServiceImpl implements OpenSearchService{
 						bulkOperationList.add(new BulkOperation.Builder().update(
 							UpdateOperation.of(io -> io
 								.index(alias)
-								.id(String.valueOf(sourceData.getDataId()))
-								.document(sourceData.getData())
+								.id(String.valueOf(sourceData.getDocumentId()))
+								.document(sourceData.getDocumentBody())
 							)
 						).build());
 						break;
@@ -135,7 +133,7 @@ public class OpenSearchServiceImpl implements OpenSearchService{
 						bulkOperationList.add(new BulkOperation.Builder().delete(
 							DeleteOperation.of(io -> io
 								.index(alias)
-								.id(String.valueOf(sourceData.getDataId()))
+								.id(String.valueOf(sourceData.getDocumentId()))
 							)
 						).build());
 						break;
