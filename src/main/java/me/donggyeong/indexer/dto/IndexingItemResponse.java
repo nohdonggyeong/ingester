@@ -7,7 +7,6 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import me.donggyeong.indexer.entity.IndexingItem;
 import me.donggyeong.indexer.enums.Action;
-import me.donggyeong.indexer.enums.Status;
 
 @AllArgsConstructor
 @Getter

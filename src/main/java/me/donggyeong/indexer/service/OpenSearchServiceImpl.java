@@ -29,7 +29,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import me.donggyeong.indexer.dto.LatestIndicesResponse;
 import me.donggyeong.indexer.dto.IndexingItemResponse;
 import me.donggyeong.indexer.enums.ErrorCode;
 import me.donggyeong.indexer.exception.CustomException;
