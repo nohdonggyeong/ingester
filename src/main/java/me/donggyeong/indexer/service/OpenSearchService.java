@@ -8,12 +8,12 @@ import org.opensearch.client.opensearch.indices.CreateIndexResponse;
 import org.opensearch.client.opensearch.indices.DeleteIndexResponse;
 import org.opensearch.client.transport.endpoints.BooleanResponse;
 
-import me.donggyeong.indexer.dto.IndexingItemResponse;
+import me.donggyeong.indexer.dto.IndexingItemRequest;
 
 public interface OpenSearchService {
-	CreateIndexResponse createIndex(String indexName);
+	CreateIndexResponse createIndex(String targetName);
 	BooleanResponse checkIndexExists(String indexName);
-	DeleteIndexResponse deleteIndex(String indexName);
-	BulkResponse requestBulk(List<IndexingItemResponse> dataList);
+	DeleteIndexResponse deleteIndex(String targetName);
 	AliasesResponse getAliasList();
+	BulkResponse requestBulk(List<IndexingItemRequest> dataList);
 }

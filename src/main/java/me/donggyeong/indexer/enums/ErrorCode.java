@@ -6,7 +6,6 @@ import lombok.Getter;
 
 @Getter
 public enum ErrorCode {
-	NOT_FOUND_LATEST_INDICES(HttpStatus.NOT_FOUND.value(), "Latest indices not found"),
 	OPENSEARCH_OPERATION_FAILED(HttpStatus.INTERNAL_SERVER_ERROR.value(), "OpenSearch operation failed");
 
 	private final int statusCode;

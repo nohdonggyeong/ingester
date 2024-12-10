@@ -8,8 +8,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import lombok.RequiredArgsConstructor;
-import me.donggyeong.indexer.entity.IndexingItem;
 import me.donggyeong.indexer.dto.IndexingItemRequest;
+import me.donggyeong.indexer.entity.IndexingItem;
 import me.donggyeong.indexer.dto.IndexingItemResponse;
 import me.donggyeong.indexer.repository.IndexingItemRepository;
 
@@ -28,7 +28,7 @@ public class IndexingItemServiceImpl implements IndexingItemService {
 
 	@Override
 	@Transactional(readOnly = true)
-	public List<IndexingItemResponse> findIndexingItemAfter(ZonedDateTime lastIndexedAt) {
+	public List<IndexingItemResponse> getIndexingItemListAfter(ZonedDateTime lastIndexedAt) {
 		return indexingItemRepository.findByConsumedAtAfter(lastIndexedAt)
 			.stream()
 			.map(IndexingItemResponse::new)

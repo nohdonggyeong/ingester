@@ -10,8 +10,8 @@ import org.springframework.web.bind.annotation.RestController;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import me.donggyeong.indexer.dto.IndexingItemResponse;
 import me.donggyeong.indexer.dto.IndexingItemRequest;
+import me.donggyeong.indexer.dto.IndexingItemResponse;
 import me.donggyeong.indexer.service.IndexingItemService;
 
 @RestController

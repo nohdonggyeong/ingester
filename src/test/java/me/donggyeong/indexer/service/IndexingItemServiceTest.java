@@ -49,7 +49,7 @@ class IndexingItemServiceTest {
 	}
 
 	@Test
-	void findIndexingItemAfter() {
+	void getIndexingItemListAfter() {
 		// given
 		ZonedDateTime offsetTime = ZonedDateTime.now(ZoneId.of("UTC"));
 		Map<String, Object> documentBody = new HashMap<>();
@@ -60,7 +60,7 @@ class IndexingItemServiceTest {
 		indexingItemService.saveIndexingItem(indexingItemRequest);
 
 		// when
-		List<IndexingItemResponse> indexingItemResponseList = indexingItemService.findIndexingItemAfter(offsetTime);
+		List<IndexingItemResponse> indexingItemResponseList = indexingItemService.getIndexingItemListAfter(offsetTime);
 
 		// then
 		assertNotNull(indexingItemResponseList);

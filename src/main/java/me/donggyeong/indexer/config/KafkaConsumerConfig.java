@@ -14,7 +14,7 @@ import org.springframework.kafka.core.ConsumerFactory;
 import org.springframework.kafka.core.DefaultKafkaConsumerFactory;
 import org.springframework.kafka.support.serializer.JsonDeserializer;
 
-import me.donggyeong.indexer.dto.IndexingItemRequest;
+import me.donggyeong.indexer.dto.IndexingItemResponse;
 
 @EnableKafka
 @Configuration
@@ -26,15 +26,15 @@ public class KafkaConsumerConfig {
 	private String groupId;
 
 	@Bean
-	public ConsumerFactory<String, IndexingItemRequest> pushEntityConsumerFactory() {
-		JsonDeserializer<IndexingItemRequest> deserializer = gcmPushEntityJsonDeserializer();
+	public ConsumerFactory<String, IndexingItemResponse> pushEntityConsumerFactory() {
+		JsonDeserializer<IndexingItemResponse> deserializer = gcmPushEntityJsonDeserializer();
 		return new DefaultKafkaConsumerFactory<>(
 			consumerFactoryConfig(deserializer),
 			new StringDeserializer(),
 			deserializer);
 	}
 
-	private Map<String, Object> consumerFactoryConfig(JsonDeserializer<IndexingItemRequest> deserializer) {
+	private Map<String, Object> consumerFactoryConfig(JsonDeserializer<IndexingItemResponse> deserializer) {
 		Map<String, Object> props = new HashMap<>();
 		props.put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, bootstrapAddress);
 		props.put(ConsumerConfig.GROUP_ID_CONFIG, groupId);
@@ -43,8 +43,8 @@ public class KafkaConsumerConfig {
 		return props;
 	}
 
-	private JsonDeserializer<IndexingItemRequest> gcmPushEntityJsonDeserializer() {
-		JsonDeserializer<IndexingItemRequest> deserializer = new JsonDeserializer<>(IndexingItemRequest.class);
+	private JsonDeserializer<IndexingItemResponse> gcmPushEntityJsonDeserializer() {
+		JsonDeserializer<IndexingItemResponse> deserializer = new JsonDeserializer<>(IndexingItemResponse.class);
 		deserializer.setRemoveTypeHeaders(false);
 		deserializer.setUseTypeMapperForKey(true);
 		deserializer.addTrustedPackages("*");
@@ -52,8 +52,8 @@ public class KafkaConsumerConfig {
 	}
 
 	@Bean
-	public ConcurrentKafkaListenerContainerFactory<String, IndexingItemRequest> kafkaListenerContainerFactory() {
-		ConcurrentKafkaListenerContainerFactory<String, IndexingItemRequest> factory = new ConcurrentKafkaListenerContainerFactory<>();
+	public ConcurrentKafkaListenerContainerFactory<String, IndexingItemResponse> kafkaListenerContainerFactory() {
+		ConcurrentKafkaListenerContainerFactory<String, IndexingItemResponse> factory = new ConcurrentKafkaListenerContainerFactory<>();
 		factory.setConsumerFactory(pushEntityConsumerFactory());
 		return factory;
 	}

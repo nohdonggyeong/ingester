@@ -35,4 +35,11 @@ public class IndexingItemRequest {
 			.documentBody(this.documentBody)
 			.build();
 	}
+	
+	public IndexingItemRequest(IndexingItemResponse indexingItemResponse) {
+		this.action = indexingItemResponse.getAction();
+		this.targetName = indexingItemResponse.getTargetName();
+		this.documentId = indexingItemResponse.getDocumentId();;
+		this.documentBody = indexingItemResponse.getDocumentBody();
+	}
 }
