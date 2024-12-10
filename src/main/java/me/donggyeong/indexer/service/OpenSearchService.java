@@ -2,6 +2,7 @@ package me.donggyeong.indexer.service;
 
 import java.util.List;
 
+import org.opensearch.client.opensearch.cat.AliasesResponse;
 import org.opensearch.client.opensearch.core.BulkResponse;
 import org.opensearch.client.opensearch.indices.CreateIndexResponse;
 import org.opensearch.client.opensearch.indices.DeleteIndexResponse;
@@ -14,4 +15,5 @@ public interface OpenSearchService {
 	BooleanResponse checkIndexExists(String indexName);
 	DeleteIndexResponse deleteIndex(String indexName);
 	BulkResponse requestBulk(List<IndexingItemResponse> dataList);
+	AliasesResponse getAliasList();
 }

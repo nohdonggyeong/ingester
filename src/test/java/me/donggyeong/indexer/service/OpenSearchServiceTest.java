@@ -13,6 +13,7 @@ import org.junit.jupiter.api.MethodOrderer;
 import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestMethodOrder;
+import org.opensearch.client.opensearch.cat.AliasesResponse;
 import org.opensearch.client.opensearch.core.BulkResponse;
 import org.opensearch.client.opensearch.indices.CreateIndexResponse;
 import org.opensearch.client.opensearch.indices.DeleteIndexResponse;
@@ -148,6 +149,18 @@ class OpenSearchServiceTest {
 		assertAll(
 			() -> assertNotNull(deleteIndexResponse),
 			() -> assertTrue(deleteIndexResponse.acknowledged())
+		);
+	}
+
+	@Test
+	void getAliasList() {
+		// Given & When
+		AliasesResponse aliasesResponse = openSearchService.getAliasList();
+		log.debug("aliasesResponse : [{}]", aliasesResponse);
+
+		// Then
+		assertAll(
+			() -> assertNotNull(aliasesResponse)
 		);
 	}
 }

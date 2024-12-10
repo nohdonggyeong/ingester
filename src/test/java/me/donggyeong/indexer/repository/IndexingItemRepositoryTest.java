@@ -52,7 +52,7 @@ public class IndexingItemRepositoryTest {
 	}
 
 	@Test
-	public void findByConsumedAtAfterAndIsValidTrue() {
+	public void findByConsumedAtAfter() {
 		// given
 		Map<String, Object> documentBody = new HashMap<>();
 		documentBody.put("category", "test-category");

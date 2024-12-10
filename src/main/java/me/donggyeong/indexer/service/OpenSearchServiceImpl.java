@@ -6,6 +6,8 @@ import java.util.List;
 
 import org.opensearch.client.opensearch.OpenSearchClient;
 import org.opensearch.client.opensearch._types.Refresh;
+import org.opensearch.client.opensearch.cat.AliasesRequest;
+import org.opensearch.client.opensearch.cat.AliasesResponse;
 import org.opensearch.client.opensearch.core.BulkRequest;
 import org.opensearch.client.opensearch.core.BulkResponse;
 import org.opensearch.client.opensearch.core.bulk.BulkOperation;
@@ -81,6 +83,17 @@ public class OpenSearchServiceImpl implements OpenSearchService{
 		try {
 			DeleteIndexRequest deleteIndexRequest = new DeleteIndexRequest.Builder().index(indexName).build();
 			return openSearchClient.indices().delete(deleteIndexRequest);
+		} catch (IOException e) {
+			throw new CustomException(ErrorCode.OPENSEARCH_OPERATION_FAILED);
+		}
+	}
+
+	@Override
+	@Transactional(readOnly = true)
+	public AliasesResponse getAliasList() {
+		try {
+			AliasesRequest aliasesRequest = new AliasesRequest.Builder().sort("index").build();
+			return openSearchClient.cat().aliases(aliasesRequest);
 		} catch (IOException e) {
 			throw new CustomException(ErrorCode.OPENSEARCH_OPERATION_FAILED);
 		}
