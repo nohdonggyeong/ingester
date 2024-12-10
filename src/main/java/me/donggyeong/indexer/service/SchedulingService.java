@@ -25,13 +25,13 @@ public class SchedulingService {
 	@Scheduled(cron = "0/10 * * * * ?")
 	public void scheduleIndexing() {
 		ZonedDateTime lastIndexedAt = null;
-		List<IndexingItemResponse> indexingItemResponseList = indexingItemService.getIndexingItemListAfter(lastIndexedAt);
+		List<IndexingItemResponse> indexingItemResponseList = indexingItemService.findByConsumedAtAfter(lastIndexedAt);
 
 		List<IndexingItemRequest> indexingItemRequestList = indexingItemResponseList.stream().map(IndexingItemRequest::new).toList();
 		BulkResponse bulkResponse = openSearchService.requestBulk(indexingItemRequestList);
 
 		IndexingResultRequest indexingResultRequest = new IndexingResultRequest(bulkResponse);
-		IndexingResultResponse indexingResultResponse = indexingResultService.saveIndexingResult(indexingResultRequest);
+		IndexingResultResponse indexingResultResponse = indexingResultService.save(indexingResultRequest);
 		log.info("[ Completed ]: {}", indexingResultResponse.toString());
 	}
 }

@@ -4,5 +4,5 @@ import me.donggyeong.indexer.dto.IndexingResultRequest;
 import me.donggyeong.indexer.dto.IndexingResultResponse;
 
 public interface IndexingResultService {
-	IndexingResultResponse saveIndexingResult(IndexingResultRequest indexingResultRequest);
+	IndexingResultResponse save(IndexingResultRequest indexingResultRequest);
 }

@@ -31,7 +31,7 @@ class IndexingItemServiceTest {
 	}
 
 	@Test
-	void saveIndexingItem() {
+	void save() {
 		// given
 		Map<String, Object> documentBody = new HashMap<>();
 		documentBody.put("category", "test-category");
@@ -40,7 +40,7 @@ class IndexingItemServiceTest {
 		IndexingItemRequest indexingItemRequest = new IndexingItemRequest(Action.CREATE, "blog", 1L, documentBody);
 
 		// when
-		IndexingItemResponse indexingItemResponse = indexingItemService.saveIndexingItem(indexingItemRequest);
+		IndexingItemResponse indexingItemResponse = indexingItemService.save(indexingItemRequest);
 
 		// then
 		assertNotNull(indexingItemResponse);
@@ -49,7 +49,7 @@ class IndexingItemServiceTest {
 	}
 
 	@Test
-	void getIndexingItemListAfter() {
+	void findByConsumedAtAfter() {
 		// given
 		ZonedDateTime offsetTime = ZonedDateTime.now(ZoneId.of("UTC"));
 		Map<String, Object> documentBody = new HashMap<>();
@@ -57,10 +57,10 @@ class IndexingItemServiceTest {
 		documentBody.put("title", "test-title");
 		documentBody.put("description", "test-description");
 		IndexingItemRequest indexingItemRequest = new IndexingItemRequest(Action.CREATE, "blog", 1L, documentBody);
-		indexingItemService.saveIndexingItem(indexingItemRequest);
+		indexingItemService.save(indexingItemRequest);
 
 		// when
-		List<IndexingItemResponse> indexingItemResponseList = indexingItemService.getIndexingItemListAfter(offsetTime);
+		List<IndexingItemResponse> indexingItemResponseList = indexingItemService.findByConsumedAtAfter(offsetTime);
 
 		// then
 		assertNotNull(indexingItemResponseList);

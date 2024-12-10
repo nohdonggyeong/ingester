@@ -14,6 +14,6 @@ public interface OpenSearchService {
 	CreateIndexResponse createIndex(String targetName);
 	BooleanResponse checkIndexExists(String indexName);
 	DeleteIndexResponse deleteIndex(String targetName);
-	AliasesResponse getAliasList();
+	AliasesResponse findAllAliases();
 	BulkResponse requestBulk(List<IndexingItemRequest> dataList);
 }

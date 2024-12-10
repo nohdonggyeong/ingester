@@ -16,7 +16,7 @@ public class IndexingResultServiceImpl implements IndexingResultService{
 
 	@Override
 	@Transactional
-	public IndexingResultResponse saveIndexingResult(IndexingResultRequest indexingResultRequest) {
+	public IndexingResultResponse save(IndexingResultRequest indexingResultRequest) {
 		IndexingResult indexingResult = indexingResultRequest.toEntity();
 		indexingResult = indexingResultRepository.save(indexingResult);
 		return new IndexingResultResponse(indexingResult);

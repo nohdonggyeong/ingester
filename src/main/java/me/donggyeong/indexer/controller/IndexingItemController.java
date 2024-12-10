@@ -23,9 +23,9 @@ public class IndexingItemController {
 
 	@PostMapping
 	@Deprecated(since = "v1", forRemoval = true)
-	public ResponseEntity<IndexingItemResponse> saveIndexingItem(@Valid @RequestBody IndexingItemRequest indexingItemRequest) {
+	public ResponseEntity<IndexingItemResponse> save(@Valid @RequestBody IndexingItemRequest indexingItemRequest) {
 		log.info("Requested indexing item: {}", indexingItemRequest.toString());
-		IndexingItemResponse indexingItemResponse = indexingItemService.saveIndexingItem(indexingItemRequest);
+		IndexingItemResponse indexingItemResponse = indexingItemService.save(indexingItemRequest);
 		return ResponseEntity.status(HttpStatus.CREATED).body(indexingItemResponse);
 	}
 }

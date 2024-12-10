@@ -37,9 +37,9 @@ class IndexingItemControllerTest {
 	private static final String JSON_FIRST_ELEMENT_PATH = "$[0]";
 
 	@Test
-	void saveIndexingItem() throws Exception {
+	void save() throws Exception {
 		// given
-		when(indexingItemService.saveIndexingItem(any(IndexingItemRequest.class))).thenReturn(mock(IndexingItemResponse.class));
+		when(indexingItemService.save(any(IndexingItemRequest.class))).thenReturn(mock(IndexingItemResponse.class));
 		IndexingItemRequest indexingItemRequest = new IndexingItemRequest(
 			Action.CREATE,
 			"blog",
@@ -56,6 +56,6 @@ class IndexingItemControllerTest {
 		// then
 			.andExpect(status().isCreated())
 			.andExpect(jsonPath(JSON_ROOT_PATH).isNotEmpty());
-		verify(indexingItemService, times(1)).saveIndexingItem(any(IndexingItemRequest.class));
+		verify(indexingItemService, times(1)).save(any(IndexingItemRequest.class));
 	}
 }

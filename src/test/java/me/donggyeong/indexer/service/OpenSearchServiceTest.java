@@ -132,9 +132,9 @@ class OpenSearchServiceTest {
 	}
 
 	@Test
-	void getAliasList() {
+	void findAllAliases() {
 		// Given & When
-		AliasesResponse aliasesResponse = openSearchService.getAliasList();
+		AliasesResponse aliasesResponse = openSearchService.findAllAliases();
 		log.debug("aliasesResponse : [{}]", aliasesResponse);
 
 		// Then

@@ -20,7 +20,7 @@ public class IndexingItemServiceImpl implements IndexingItemService {
 
 	@Override
 	@Transactional
-	public IndexingItemResponse saveIndexingItem(IndexingItemRequest indexingItemRequest) {
+	public IndexingItemResponse save(IndexingItemRequest indexingItemRequest) {
 		IndexingItem indexingItem = indexingItemRequest.toEntity();
 		indexingItem = indexingItemRepository.save(indexingItem);
 		return new IndexingItemResponse(indexingItem);
@@ -28,7 +28,7 @@ public class IndexingItemServiceImpl implements IndexingItemService {
 
 	@Override
 	@Transactional(readOnly = true)
-	public List<IndexingItemResponse> getIndexingItemListAfter(ZonedDateTime lastIndexedAt) {
+	public List<IndexingItemResponse> findByConsumedAtAfter(ZonedDateTime lastIndexedAt) {
 		return indexingItemRepository.findByConsumedAtAfter(lastIndexedAt)
 			.stream()
 			.map(IndexingItemResponse::new)

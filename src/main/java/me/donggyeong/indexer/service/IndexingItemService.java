@@ -7,6 +7,6 @@ import me.donggyeong.indexer.dto.IndexingItemRequest;
 import me.donggyeong.indexer.dto.IndexingItemResponse;
 
 public interface IndexingItemService {
-	IndexingItemResponse saveIndexingItem(IndexingItemRequest indexingItemRequest);
-	List<IndexingItemResponse> getIndexingItemListAfter(ZonedDateTime lastIndexedAt);
+	IndexingItemResponse save(IndexingItemRequest indexingItemRequest);
+	List<IndexingItemResponse> findByConsumedAtAfter(ZonedDateTime lastIndexedAt);
 }

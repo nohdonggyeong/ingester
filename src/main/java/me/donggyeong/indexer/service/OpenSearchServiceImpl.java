@@ -83,7 +83,7 @@ public class OpenSearchServiceImpl implements OpenSearchService{
 
 	@Override
 	@Transactional(readOnly = true)
-	public AliasesResponse getAliasList() {
+	public AliasesResponse findAllAliases() {
 		try {
 			AliasesRequest aliasesRequest = new AliasesRequest.Builder().sort("index").build();
 			return openSearchClient.cat().aliases(aliasesRequest);
