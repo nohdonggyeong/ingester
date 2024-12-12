@@ -2,11 +2,7 @@ package me.donggyeong.indexer.entity;
 
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
-import java.util.Map;
 
-import org.hibernate.annotations.Type;
-
-import io.hypersistence.utils.hibernate.type.json.JsonType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
@@ -23,10 +19,10 @@ import lombok.NoArgsConstructor;
 import me.donggyeong.indexer.enums.Action;
 
 @Entity
-@Table(name = "indexing_item")
+@Table(name = "indexed_item")
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Getter
-public class IndexingItem {
+public class IndexedItem {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
@@ -35,29 +31,36 @@ public class IndexingItem {
 	@Enumerated(EnumType.STRING)
 	private Action action;
 
-	@Column(name = "target_name", nullable = false)
-	private String targetName;
+	@Column(name = "index", nullable = false)
+	private String index;
 
-	@Column(name = "document_id", nullable = false)
-	private Long documentId;
+	@Column(name = "doc_id", nullable = false)
+	private String docId;
 
-	@Column(name = "document_body", nullable = false, columnDefinition = "json")
-	@Type(JsonType.class)
-	private Map<String, Object> documentBody;
+	@Column(name = "status", nullable = false)
+	private Integer status;
 
-	@Column(name = "consumed_at", nullable = false, updatable = false)
-	private ZonedDateTime consumedAt;
+	@Column(name = "result")
+	private String result;
+
+	@Column(name = "error")
+	private String error;
+
+	@Column(name = "indexed_at", nullable = false, updatable = false)
+	private ZonedDateTime indexedAt;
 
 	@PrePersist
 	protected void onCreate() {
-		this.consumedAt = ZonedDateTime.now(ZoneId.of("UTC"));
+		this.indexedAt = ZonedDateTime.now(ZoneId.of("UTC"));
 	}
 
 	@Builder
-	public IndexingItem(Action action, String targetName, Long documentId, Map<String, Object> documentBody) {
+	public IndexedItem(Action action, String index, String docId, Integer status, String result, String error) {
 		this.action = action;
-		this.targetName = targetName;
-		this.documentId = documentId;
-		this.documentBody = documentBody;
+		this.index = index;
+		this.docId = docId;
+		this.status = status;
+		this.result = result;
+		this.error = error;
 	}
 }

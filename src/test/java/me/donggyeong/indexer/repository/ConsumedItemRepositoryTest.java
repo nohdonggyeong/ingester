@@ -1,8 +1,9 @@
 package me.donggyeong.indexer.repository;
 
 import me.donggyeong.indexer.config.QuerydslConfig;
-import me.donggyeong.indexer.entity.IndexingItem;
+import me.donggyeong.indexer.entity.ConsumedItem;
 import me.donggyeong.indexer.enums.Action;
+import me.donggyeong.indexer.enums.IndexingState;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -10,7 +11,6 @@ import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager;
 import org.springframework.context.annotation.Import;
 
-import java.time.ZonedDateTime;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -19,13 +19,13 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 @DataJpaTest
 @Import(QuerydslConfig.class)
-public class IndexingItemRepositoryTest {
+public class ConsumedItemRepositoryTest {
 
 	@Autowired
 	private TestEntityManager entityManager;
 
 	@Autowired
-	private IndexingItemRepository indexingItemRepository;
+	private ConsumedItemRepository consumedItemRepository;
 
 	@Test
 	public void save() {
@@ -34,60 +34,58 @@ public class IndexingItemRepositoryTest {
 		documentBody.put("category", "test-category");
 		documentBody.put("title", "test-title");
 		documentBody.put("description", "test-description");
-		IndexingItem indexingItem = IndexingItem.builder()
+		ConsumedItem consumedItem = ConsumedItem.builder()
 			.action(Action.CREATE)
-			.targetName("blog")
-			.documentId(1L)
-			.documentBody(documentBody)
+			.target("blog")
+			.docId("1")
+			.docBody(documentBody)
 			.build();
 
 		// when
-		IndexingItem savedIndexingItem = indexingItemRepository.save(indexingItem);
+		ConsumedItem savedConsumedItem = consumedItemRepository.save(consumedItem);
 
 		// then
-		assertThat(savedIndexingItem).isNotNull();
-		assertThat(savedIndexingItem.getId()).isNotNull();
-		assertThat(savedIndexingItem.getDocumentBody()).isEqualTo(documentBody);
-		assertThat(savedIndexingItem.getConsumedAt()).isNotNull();
+		assertThat(savedConsumedItem).isNotNull();
+		assertThat(savedConsumedItem.getId()).isNotNull();
+		assertThat(savedConsumedItem.getDocBody()).isEqualTo(documentBody);
+		assertThat(savedConsumedItem.getConsumedAt()).isNotNull();
 	}
 
 	@Test
-	public void findByConsumedAtAfter() {
+	public void findByIndexingStateOrderByConsumedAt() {
 		// given
 		Map<String, Object> documentBody = new HashMap<>();
 		documentBody.put("category", "test-category");
 		documentBody.put("title", "test-title");
 		documentBody.put("description", "test-description");
 
-		IndexingItem indexingItem1 = IndexingItem.builder()
+		ConsumedItem consumedItem1 = ConsumedItem.builder()
 			.action(Action.CREATE)
-			.targetName("blog")
-			.documentId(1L)
-			.documentBody(documentBody)
+			.target("blog")
+			.docId("1")
+			.docBody(documentBody)
 			.build();
 
-		IndexingItem indexingItem2 = IndexingItem.builder()
+		ConsumedItem consumedItem2 = ConsumedItem.builder()
 			.action(Action.UPDATE)
-			.targetName("blog")
-			.documentId(2L)
-			.documentBody(documentBody)
+			.target("blog")
+			.docId("2")
+			.docBody(documentBody)
 			.build();
 
-		entityManager.persist(indexingItem1);
+		entityManager.persist(consumedItem1);
 
-		ZonedDateTime baseTime = ZonedDateTime.now();
-
-		entityManager.persist(indexingItem2);
+		entityManager.persist(consumedItem2);
 
 		entityManager.flush();
 
 		// when
-		List<IndexingItem> foundSourceData = indexingItemRepository.findByConsumedAtAfter(baseTime);
+		List<ConsumedItem> foundSourceData = consumedItemRepository.findByIndexingStateOrderByConsumedAt(IndexingState.PENDING);
 
 		// then
-		assertThat(foundSourceData).hasSize(1);
-		assertThat(foundSourceData).extracting(IndexingItem::getConsumedAt).allSatisfy(consumedAt ->
-			assertThat(consumedAt).isAfter(baseTime)
+		assertThat(foundSourceData).hasSize(2);
+		assertThat(foundSourceData).extracting(ConsumedItem::getIndexingState).allSatisfy(indexingState ->
+			assertThat(indexingState).isEqualTo(IndexingState.PENDING)
 		);
 	}
 }

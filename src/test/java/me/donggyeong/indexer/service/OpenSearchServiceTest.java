@@ -19,8 +19,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
 import lombok.extern.slf4j.Slf4j;
-import me.donggyeong.indexer.dto.IndexingItemRequest;
+import me.donggyeong.indexer.dto.ConsumedItemResponse;
 import me.donggyeong.indexer.enums.Action;
+import me.donggyeong.indexer.enums.IndexingState;
 
 @SpringBootTest
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
@@ -28,14 +29,14 @@ import me.donggyeong.indexer.enums.Action;
 class OpenSearchServiceTest {
 	@Autowired
 	OpenSearchService openSearchService;
-	private static final String TARGET_NAME = "test";
-	private static final String INDEX_NAME = "index_for_test";
+	private static final String TARGET = "test";
+	private static final String INDEX = "index_for_test";
 
 	@Order(1)
 	@Test
 	void createIndex() {
 		// Given & When
-		CreateIndexResponse createIndexResponse = openSearchService.createIndex(TARGET_NAME);
+		CreateIndexResponse createIndexResponse = openSearchService.createIndex(TARGET);
 		log.debug("createIndexResponse.index : [{}], createIndexResponse.acknowledged : [{}]"
 			, createIndexResponse.index(), createIndexResponse.acknowledged());
 
@@ -49,21 +50,24 @@ class OpenSearchServiceTest {
 
 	@Order(2)
 	@Test
-	void requestBulk() {
+	void requestBulkIndexing() {
 		// Given
-		List<IndexingItemRequest> indexingItemRequestList = new ArrayList<>();
+		List<ConsumedItemResponse> consumedItemResponseList = new ArrayList<>();
 
 		// 인덱싱할 문서 추가
 		Map<String, Object> indexDocumentBody = new HashMap<>();
 		indexDocumentBody.put("category", "test-index-category");
 		indexDocumentBody.put("title", "test-index-title");
 		indexDocumentBody.put("description", "test-index-description");
-		indexingItemRequestList.add(
-			new IndexingItemRequest(
-				Action.INDEX,
-				TARGET_NAME,
+		consumedItemResponseList.add(
+			new ConsumedItemResponse(
 				1L,
-				indexDocumentBody
+				Action.INDEX,
+				TARGET,
+				"1",
+				indexDocumentBody,
+				null,
+				IndexingState.PENDING
 			)
 		);
 
@@ -72,12 +76,15 @@ class OpenSearchServiceTest {
 		createDocumentBody.put("category", "test-create-category");
 		createDocumentBody.put("title", "test-create-title");
 		createDocumentBody.put("description", "test-create-description");
-		indexingItemRequestList.add(
-			new IndexingItemRequest(
-				Action.CREATE,
-				TARGET_NAME,
+		consumedItemResponseList.add(
+			new ConsumedItemResponse(
 				2L,
-				createDocumentBody
+				Action.CREATE,
+				TARGET,
+				"2",
+				createDocumentBody,
+				null,
+				IndexingState.PENDING
 			)
 		);
 
@@ -86,32 +93,38 @@ class OpenSearchServiceTest {
 		updateDocumentBody.put("category", "test-update-category");
 		updateDocumentBody.put("title", "test-update-title");
 		updateDocumentBody.put("description", "test-update-description");
-		indexingItemRequestList.add(
-			new IndexingItemRequest(
+		consumedItemResponseList.add(
+			new ConsumedItemResponse(
+				3L,
 				Action.UPDATE,
-				TARGET_NAME,
-				1L,
-				updateDocumentBody
+				TARGET,
+				"1",
+				updateDocumentBody,
+				null,
+				IndexingState.PENDING
 			)
 		);
 
 		// 삭제할 문서 추가
-		indexingItemRequestList.add(
-			new IndexingItemRequest(
+		consumedItemResponseList.add(
+			new ConsumedItemResponse(
+				4L,
 				Action.DELETE,
-				TARGET_NAME,
-				2L,
-				null
+				TARGET,
+				"2",
+				null,
+				null,
+				IndexingState.PENDING
 			)
 		);
 
 		// When
-		BulkResponse bulkResponse = openSearchService.requestBulk(indexingItemRequestList);
+		BulkResponse bulkResponse = openSearchService.requestBulkIndexing(consumedItemResponseList);
 
 		// Then
 		assertAll(
 			() -> assertNotNull(bulkResponse),
-			() -> assertEquals(indexingItemRequestList.size(), bulkResponse.items().size()),
+			() -> assertEquals(consumedItemResponseList.size(), bulkResponse.items().size()),
 			() -> assertTrue(bulkResponse.items().stream().allMatch(item -> item.error() == null)),
 			() -> log.debug("Bulk operation completed successfully with response: {}", bulkResponse)
 		);
@@ -121,7 +134,7 @@ class OpenSearchServiceTest {
 	@Test
 	void deleteIndex() {
 		// Given & When
-		DeleteIndexResponse deleteIndexResponse = openSearchService.deleteIndex(INDEX_NAME);
+		DeleteIndexResponse deleteIndexResponse = openSearchService.deleteIndex(INDEX);
 		log.debug("deleteIndexResponse.acknowledged : [{}]", deleteIndexResponse.acknowledged());
 
 		// Then

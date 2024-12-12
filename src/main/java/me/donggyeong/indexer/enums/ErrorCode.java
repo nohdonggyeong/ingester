@@ -6,6 +6,7 @@ import lombok.Getter;
 
 @Getter
 public enum ErrorCode {
+	CONSUMED_ITEM_NOT_FOUND(HttpStatus.NOT_FOUND.value(), "Consumed item not found"),
 	OPENSEARCH_OPERATION_FAILED(HttpStatus.INTERNAL_SERVER_ERROR.value(), "OpenSearch operation failed");
 
 	private final int statusCode;

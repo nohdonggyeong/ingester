@@ -13,21 +13,22 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
-import me.donggyeong.indexer.dto.IndexingItemRequest;
-import me.donggyeong.indexer.dto.IndexingItemResponse;
+import me.donggyeong.indexer.dto.ConsumedItemRequest;
+import me.donggyeong.indexer.dto.ConsumedItemResponse;
 import me.donggyeong.indexer.enums.Action;
-import me.donggyeong.indexer.repository.IndexingItemRepository;
+import me.donggyeong.indexer.enums.IndexingState;
+import me.donggyeong.indexer.repository.ConsumedItemRepository;
 
 @SpringBootTest
-class IndexingItemServiceTest {
+class ConsumedItemServiceTest {
 	@Autowired
-	private IndexingItemService indexingItemService;
+	private ConsumedItemService consumedItemService;
 	@Autowired
-	private IndexingItemRepository indexingItemRepository;
+	private ConsumedItemRepository consumedItemRepository;
 
 	@AfterEach
 	void tearDown() {
-		indexingItemRepository.deleteAll();
+		consumedItemRepository.deleteAll();
 	}
 
 	@Test
@@ -37,41 +38,42 @@ class IndexingItemServiceTest {
 		documentBody.put("category", "test-category");
 		documentBody.put("title", "test-title");
 		documentBody.put("description", "test-description");
-		IndexingItemRequest indexingItemRequest = new IndexingItemRequest(Action.CREATE, "blog", 1L, documentBody);
+		ConsumedItemRequest consumedItemRequest = new ConsumedItemRequest(Action.CREATE, "blog", "1", documentBody);
 
 		// when
-		IndexingItemResponse indexingItemResponse = indexingItemService.save(indexingItemRequest);
+		ConsumedItemResponse consumedItemResponse = consumedItemService.save(consumedItemRequest);
 
 		// then
-		assertNotNull(indexingItemResponse);
-		assertMapEquals(documentBody, indexingItemResponse.getDocumentBody());
-		assertNotNull(indexingItemResponse.getConsumedAt());
+		assertNotNull(consumedItemResponse);
+		assertMapEquals(documentBody, consumedItemResponse.getDocBody());
+		assertNotNull(consumedItemResponse.getConsumedAt());
 	}
 
 	@Test
-	void findByConsumedAtAfter() {
+	void findByIndexingStateOrderByConsumedAt() {
 		// given
 		ZonedDateTime offsetTime = ZonedDateTime.now(ZoneId.of("UTC"));
 		Map<String, Object> documentBody = new HashMap<>();
 		documentBody.put("category", "test-category");
 		documentBody.put("title", "test-title");
 		documentBody.put("description", "test-description");
-		IndexingItemRequest indexingItemRequest = new IndexingItemRequest(Action.CREATE, "blog", 1L, documentBody);
-		indexingItemService.save(indexingItemRequest);
+		ConsumedItemRequest consumedItemRequest = new ConsumedItemRequest(Action.CREATE, "blog", "1", documentBody);
+		consumedItemService.save(consumedItemRequest);
 
 		// when
-		List<IndexingItemResponse> indexingItemResponseList = indexingItemService.findByConsumedAtAfter(offsetTime);
+		List<ConsumedItemResponse> consumedItemResponseList = consumedItemService.findByIndexingStateOrderByConsumedAt(
+			IndexingState.PENDING);
 
 		// then
-		assertNotNull(indexingItemResponseList);
-		assertFalse(indexingItemResponseList.isEmpty());
-		assertEquals(1, indexingItemResponseList.size());
+		assertNotNull(consumedItemResponseList);
+		assertFalse(consumedItemResponseList.isEmpty());
+		assertEquals(1, consumedItemResponseList.size());
 
-		IndexingItemResponse indexingItemResponse = indexingItemResponseList.getFirst();
-		assertEquals(Action.CREATE, indexingItemResponse.getAction());
-		assertEquals("blog", indexingItemResponse.getTargetName());
-		assertEquals(1L, indexingItemResponse.getDocumentId());
-		assertMapEquals(documentBody, indexingItemResponse.getDocumentBody());
+		ConsumedItemResponse consumedItemResponse = consumedItemResponseList.getFirst();
+		assertEquals(Action.CREATE, consumedItemResponse.getAction());
+		assertEquals("blog", consumedItemResponse.getTarget());
+		assertEquals("1", consumedItemResponse.getDocId());
+		assertMapEquals(documentBody, consumedItemResponse.getDocBody());
 	}
 
 	// Helper method to compare maps ignoring their specific implementations

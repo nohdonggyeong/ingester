@@ -1,8 +1,6 @@
 package me.donggyeong.indexer.service;
 
 import java.io.IOException;
-import java.time.ZoneId;
-import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -30,8 +28,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import me.donggyeong.indexer.dto.IndexingItemRequest;
-import me.donggyeong.indexer.dto.IndexingItemResponse;
+import me.donggyeong.indexer.dto.ConsumedItemResponse;
 import me.donggyeong.indexer.enums.ErrorCode;
 import me.donggyeong.indexer.exception.CustomException;
 
@@ -44,11 +41,11 @@ public class OpenSearchServiceImpl implements OpenSearchService{
 
 	@Override
 	@Transactional
-	public CreateIndexResponse createIndex(String targetName) {
+	public CreateIndexResponse createIndex(String target) {
 		try {
 			CreateIndexRequest createIndexRequest = new Builder()
-				.index("index_for_" + targetName)
-				.aliases("alias_for_" + targetName, new Alias.Builder()
+				.index("index_for_" + target)
+				.aliases("alias_for_" + target, new Alias.Builder()
 					.isWriteIndex(true)
 					.build())
 				.build();
@@ -61,9 +58,9 @@ public class OpenSearchServiceImpl implements OpenSearchService{
 
 	@Override
 	@Transactional(readOnly = true)
-	public BooleanResponse checkIndexExists(String indexName) {
+	public BooleanResponse checkIndexExists(String index) {
 		try {
-			ExistsRequest existsRequest = ExistsRequest.of(r -> r.index(indexName));
+			ExistsRequest existsRequest = ExistsRequest.of(r -> r.index(index));
 			return openSearchClient.indices().exists(existsRequest);
 		} catch (IOException e) {
 			throw new CustomException(ErrorCode.OPENSEARCH_OPERATION_FAILED);
@@ -72,9 +69,9 @@ public class OpenSearchServiceImpl implements OpenSearchService{
 
 	@Override
 	@Transactional
-	public DeleteIndexResponse deleteIndex(String indexName) {
+	public DeleteIndexResponse deleteIndex(String target) {
 		try {
-			DeleteIndexRequest deleteIndexRequest = new DeleteIndexRequest.Builder().index(indexName).build();
+			DeleteIndexRequest deleteIndexRequest = new DeleteIndexRequest.Builder().index(target).build();
 			return openSearchClient.indices().delete(deleteIndexRequest);
 		} catch (IOException e) {
 			throw new CustomException(ErrorCode.OPENSEARCH_OPERATION_FAILED);
@@ -94,21 +91,21 @@ public class OpenSearchServiceImpl implements OpenSearchService{
 
 	@Override
 	@Transactional
-	public BulkResponse requestBulk(List<IndexingItemRequest> indexingItemResponseList) {
+	public BulkResponse requestBulkIndexing(List<ConsumedItemResponse> consumedItemResponseList) {
 		try {
 			List<BulkOperation> bulkOperationList = new ArrayList<>();
 
-			for (IndexingItemRequest indexingItemRequest : indexingItemResponseList) {
-				String targetName = indexingItemRequest.getTargetName();
-				String aliasName = "alias_for_" + targetName;
+			for (ConsumedItemResponse consumedItemResponse : consumedItemResponseList) {
+				String target = consumedItemResponse.getTarget();
+				String aliasName = "alias_for_" + target;
 
-				switch (indexingItemRequest.getAction()) {
+				switch (consumedItemResponse.getAction()) {
 					case INDEX:
 						bulkOperationList.add(new BulkOperation.Builder().index(
 							IndexOperation.of(io -> io
 								.index(aliasName)
-								.id(String.valueOf(indexingItemRequest.getDocumentId()))
-								.document(indexingItemRequest.getDocumentBody())
+								.id(String.valueOf(consumedItemResponse.getDocId()))
+								.document(consumedItemResponse.getDocBody())
 							)
 						).build());
 						break;
@@ -116,8 +113,8 @@ public class OpenSearchServiceImpl implements OpenSearchService{
 						bulkOperationList.add(new BulkOperation.Builder().create(
 							CreateOperation.of(io -> io
 								.index(aliasName)
-								.id(String.valueOf(indexingItemRequest.getDocumentId()))
-								.document(indexingItemRequest.getDocumentBody())
+								.id(String.valueOf(consumedItemResponse.getDocId()))
+								.document(consumedItemResponse.getDocBody())
 							)
 						).build());
 						break;
@@ -125,8 +122,8 @@ public class OpenSearchServiceImpl implements OpenSearchService{
 						bulkOperationList.add(new BulkOperation.Builder().update(
 							UpdateOperation.of(io -> io
 								.index(aliasName)
-								.id(String.valueOf(indexingItemRequest.getDocumentId()))
-								.document(indexingItemRequest.getDocumentBody())
+								.id(String.valueOf(consumedItemResponse.getDocId()))
+								.document(consumedItemResponse.getDocBody())
 							)
 						).build());
 						break;
@@ -134,7 +131,7 @@ public class OpenSearchServiceImpl implements OpenSearchService{
 						bulkOperationList.add(new BulkOperation.Builder().delete(
 							DeleteOperation.of(io -> io
 								.index(aliasName)
-								.id(String.valueOf(indexingItemRequest.getDocumentId()))
+								.id(String.valueOf(consumedItemResponse.getDocId()))
 							)
 						).build());
 						break;
@@ -152,7 +149,7 @@ public class OpenSearchServiceImpl implements OpenSearchService{
 
 			bulkResponse.items().forEach(item -> {
 				if (item.error() != null) {
-					log.error("Error processing item with ID {}: {}", item.id(), item.error());
+					log.error("Error processing item with action={}, index={}, docId={}, error={}", item.operationType().jsonValue(), item.index(), item.id(), item.error());
 				}
 			});
 

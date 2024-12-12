@@ -1,37 +1,46 @@
 package me.donggyeong.indexer.service;
 
-import java.time.ZonedDateTime;
 import java.util.List;
 
 import org.opensearch.client.opensearch.core.BulkResponse;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.CollectionUtils;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import me.donggyeong.indexer.dto.IndexingItemRequest;
-import me.donggyeong.indexer.dto.IndexingItemResponse;
-import me.donggyeong.indexer.dto.IndexingResultRequest;
-import me.donggyeong.indexer.dto.IndexingResultResponse;
+import me.donggyeong.indexer.dto.ConsumedItemResponse;
+import me.donggyeong.indexer.dto.IndexedItemRequest;
+import me.donggyeong.indexer.enums.IndexingState;
 
 @Service
 @RequiredArgsConstructor
 @Slf4j
 public class SchedulingService {
-	private final IndexingItemService indexingItemService;
+	private final ConsumedItemService consumedItemService;
 	private final OpenSearchService openSearchService;
-	private final IndexingResultService indexingResultService;
+	private final IndexedItemService indexedItemService;
 
 	@Scheduled(cron = "0/10 * * * * ?")
+	@Transactional
 	public void scheduleIndexing() {
-		ZonedDateTime lastIndexedAt = null;
-		List<IndexingItemResponse> indexingItemResponseList = indexingItemService.findByConsumedAtAfter(lastIndexedAt);
+		List<ConsumedItemResponse> consumedItemResponseList = consumedItemService.findByIndexingStateOrderByConsumedAt(IndexingState.PENDING);
+		if (CollectionUtils.isEmpty(consumedItemResponseList)) {
+			return;
+		}
 
-		List<IndexingItemRequest> indexingItemRequestList = indexingItemResponseList.stream().map(IndexingItemRequest::new).toList();
-		BulkResponse bulkResponse = openSearchService.requestBulk(indexingItemRequestList);
+		BulkResponse bulkResponse = openSearchService.requestBulkIndexing(consumedItemResponseList);
 
-		IndexingResultRequest indexingResultRequest = new IndexingResultRequest(bulkResponse);
-		IndexingResultResponse indexingResultResponse = indexingResultService.save(indexingResultRequest);
-		log.info("[ Completed ]: {}", indexingResultResponse.toString());
+		List<IndexedItemRequest> indexedItemRequestList = bulkResponse.items().stream().map(IndexedItemRequest::new).toList();
+		for (IndexedItemRequest indexedItemRequest : indexedItemRequestList) {
+			indexedItemService.save(indexedItemRequest);
+		}
+
+		for (ConsumedItemResponse consumedItemResponse : consumedItemResponseList){
+			consumedItemService.updateIndexingStatus(consumedItemResponse, IndexingState.COMPLETED);
+		}
+
+		log.info("[ Complete bulk indexing ]");
 	}
 }

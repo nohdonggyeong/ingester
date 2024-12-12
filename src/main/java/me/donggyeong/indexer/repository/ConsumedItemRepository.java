@@ -3,8 +3,8 @@ package me.donggyeong.indexer.repository;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
-import me.donggyeong.indexer.entity.IndexingResult;
+import me.donggyeong.indexer.entity.ConsumedItem;
 
 @Repository
-public interface IndexingResultRepository extends JpaRepository<IndexingResult, Long> {
+public interface ConsumedItemRepository extends JpaRepository<ConsumedItem, Long>, ConsumedItemRepositoryCustom {
 }

@@ -16,18 +16,18 @@ import org.springframework.web.util.UriComponentsBuilder;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-import me.donggyeong.indexer.dto.IndexingItemRequest;
-import me.donggyeong.indexer.dto.IndexingItemResponse;
+import me.donggyeong.indexer.dto.ConsumedItemRequest;
+import me.donggyeong.indexer.dto.ConsumedItemResponse;
 import me.donggyeong.indexer.enums.Action;
-import me.donggyeong.indexer.service.IndexingItemService;
+import me.donggyeong.indexer.service.ConsumedItemService;
 
-@WebMvcTest(IndexingItemController.class)
-class IndexingItemControllerTest {
+@WebMvcTest(ConsumedItemController.class)
+class ConsumedItemControllerTest {
 	@Autowired
 	private MockMvc mockMvc;
 
 	@MockBean
-	private IndexingItemService indexingItemService;
+	private ConsumedItemService consumedItemService;
 
 	@Autowired
 	private ObjectMapper objectMapper;
@@ -39,11 +39,11 @@ class IndexingItemControllerTest {
 	@Test
 	void save() throws Exception {
 		// given
-		when(indexingItemService.save(any(IndexingItemRequest.class))).thenReturn(mock(IndexingItemResponse.class));
-		IndexingItemRequest indexingItemRequest = new IndexingItemRequest(
+		when(consumedItemService.save(any(ConsumedItemRequest.class))).thenReturn(mock(ConsumedItemResponse.class));
+		ConsumedItemRequest consumedItemRequest = new ConsumedItemRequest(
 			Action.CREATE,
 			"blog",
-			1L,
+			"1",
 			Map.of("category", "test-category", "title", "test-title", "description", "test-description")
 		);
 
@@ -51,11 +51,11 @@ class IndexingItemControllerTest {
 		mockMvc.perform(
 			post(UriComponentsBuilder.fromPath(API_BASE_PATH).toUriString())
 				.contentType(MediaType.APPLICATION_JSON)
-				.content(objectMapper.writeValueAsString(indexingItemRequest))
+				.content(objectMapper.writeValueAsString(consumedItemRequest))
 		)
 		// then
 			.andExpect(status().isCreated())
 			.andExpect(jsonPath(JSON_ROOT_PATH).isNotEmpty());
-		verify(indexingItemService, times(1)).save(any(IndexingItemRequest.class));
+		verify(consumedItemService, times(1)).save(any(ConsumedItemRequest.class));
 	}
 }

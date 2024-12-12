@@ -9,17 +9,17 @@ import org.springframework.stereotype.Service;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import me.donggyeong.indexer.dto.IndexingItemRequest;
+import me.donggyeong.indexer.dto.ConsumedItemRequest;
 
 @Service
 @RequiredArgsConstructor
 @Slf4j
 public class KafkaConsumerService {
-	private final IndexingItemService indexingItemService;
+	private final ConsumedItemService consumedItemService;
 
 	@KafkaListener(topics = "${spring.kafka.template.default-topic}", groupId = "${spring.kafka.consumer.group-id}")
-	public void consume(@Payload @Valid IndexingItemRequest message, @Headers MessageHeaders messageHeaders) {
+	public void consume(@Payload @Valid ConsumedItemRequest message, @Headers MessageHeaders messageHeaders) {
 		log.info("Received Kafka message: {}", message.toString());
-		indexingItemService.save(message);
+		consumedItemService.save(message);
 	}
 }
