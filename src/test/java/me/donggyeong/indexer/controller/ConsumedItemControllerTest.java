@@ -32,7 +32,7 @@ class ConsumedItemControllerTest {
 	@Autowired
 	private ObjectMapper objectMapper;
 
-	private static final String API_BASE_PATH = "/api/v1/indexing-item";
+	private static final String API_BASE_PATH = "/api/v1/consumed-item";
 	private static final String JSON_ROOT_PATH = "$";
 	private static final String JSON_FIRST_ELEMENT_PATH = "$[0]";
 
