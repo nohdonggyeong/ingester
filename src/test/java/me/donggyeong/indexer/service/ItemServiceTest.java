@@ -13,22 +13,21 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
-import me.donggyeong.indexer.dto.ConsumedItemRequest;
-import me.donggyeong.indexer.dto.ConsumedItemResponse;
+import me.donggyeong.indexer.dto.ItemRequest;
+import me.donggyeong.indexer.dto.ItemResponse;
 import me.donggyeong.indexer.enums.Action;
-import me.donggyeong.indexer.enums.IndexingState;
-import me.donggyeong.indexer.repository.ConsumedItemRepository;
+import me.donggyeong.indexer.repository.ItemRepository;
 
 @SpringBootTest
-class ConsumedItemServiceTest {
+class ItemServiceTest {
 	@Autowired
-	private ConsumedItemService consumedItemService;
+	private ItemService itemService;
 	@Autowired
-	private ConsumedItemRepository consumedItemRepository;
+	private ItemRepository itemRepository;
 
 	@AfterEach
 	void tearDown() {
-		consumedItemRepository.deleteAll();
+		itemRepository.deleteAll();
 	}
 
 	@Test
@@ -38,15 +37,15 @@ class ConsumedItemServiceTest {
 		documentBody.put("category", "test-category");
 		documentBody.put("title", "test-title");
 		documentBody.put("description", "test-description");
-		ConsumedItemRequest consumedItemRequest = new ConsumedItemRequest(Action.CREATE, "blog", "1", documentBody);
+		ItemRequest itemRequest = new ItemRequest(Action.CREATE, "blog", "1", documentBody);
 
 		// when
-		ConsumedItemResponse consumedItemResponse = consumedItemService.save(consumedItemRequest);
+		ItemResponse itemResponse = itemService.save(itemRequest);
 
 		// then
-		assertNotNull(consumedItemResponse);
-		assertMapEquals(documentBody, consumedItemResponse.getDocBody());
-		assertNotNull(consumedItemResponse.getConsumedAt());
+		assertNotNull(itemResponse);
+		assertMapEquals(documentBody, itemResponse.getDocBody());
+		assertNotNull(itemResponse.getConsumedAt());
 	}
 
 	@Test
@@ -57,23 +56,23 @@ class ConsumedItemServiceTest {
 		documentBody.put("category", "test-category");
 		documentBody.put("title", "test-title");
 		documentBody.put("description", "test-description");
-		ConsumedItemRequest consumedItemRequest = new ConsumedItemRequest(Action.CREATE, "blog", "1", documentBody);
-		consumedItemService.save(consumedItemRequest);
+		ItemRequest itemRequest = new ItemRequest(Action.CREATE, "blog", "1", documentBody);
+		itemService.save(itemRequest);
 
 		// when
-		List<ConsumedItemResponse> consumedItemResponseList = consumedItemService.findByIndexingStateOrderByConsumedAt(
+		List<ItemResponse> itemResponseList = itemService.findByIndexingStateOrderByConsumedAt(
 			IndexingState.PENDING);
 
 		// then
-		assertNotNull(consumedItemResponseList);
-		assertFalse(consumedItemResponseList.isEmpty());
-		assertEquals(1, consumedItemResponseList.size());
+		assertNotNull(itemResponseList);
+		assertFalse(itemResponseList.isEmpty());
+		assertEquals(1, itemResponseList.size());
 
-		ConsumedItemResponse consumedItemResponse = consumedItemResponseList.getFirst();
-		assertEquals(Action.CREATE, consumedItemResponse.getAction());
-		assertEquals("blog", consumedItemResponse.getTarget());
-		assertEquals("1", consumedItemResponse.getDocId());
-		assertMapEquals(documentBody, consumedItemResponse.getDocBody());
+		ItemResponse itemResponse = itemResponseList.getFirst();
+		assertEquals(Action.CREATE, itemResponse.getAction());
+		assertEquals("blog", itemResponse.getTarget());
+		assertEquals("1", itemResponse.getDocId());
+		assertMapEquals(documentBody, itemResponse.getDocBody());
 	}
 
 	// Helper method to compare maps ignoring their specific implementations

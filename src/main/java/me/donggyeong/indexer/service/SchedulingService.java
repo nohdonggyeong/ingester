@@ -1,5 +1,7 @@
 package me.donggyeong.indexer.service;
 
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
 import java.util.List;
 
 import org.opensearch.client.opensearch.core.BulkResponse;
@@ -10,37 +12,29 @@ import org.springframework.util.CollectionUtils;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import me.donggyeong.indexer.dto.ConsumedItemResponse;
-import me.donggyeong.indexer.dto.IndexedItemRequest;
-import me.donggyeong.indexer.enums.IndexingState;
+import me.donggyeong.indexer.dto.ItemResponse;
 
 @Service
 @RequiredArgsConstructor
 @Slf4j
 public class SchedulingService {
-	private final ConsumedItemService consumedItemService;
+	private final ItemService itemService;
 	private final OpenSearchService openSearchService;
-	private final IndexedItemService indexedItemService;
 
 	@Scheduled(cron = "0/10 * * * * ?")
 	@Transactional
 	public void scheduleIndexing() {
-		List<ConsumedItemResponse> consumedItemResponseList = consumedItemService.findByIndexingStateOrderByConsumedAt(IndexingState.PENDING);
-		if (CollectionUtils.isEmpty(consumedItemResponseList)) {
+		List<ItemResponse> itemResponseList = itemService.findByStatusIsNullOrderByConsumedAtAsc();
+
+		if (CollectionUtils.isEmpty(itemResponseList)) {
 			return;
 		}
+		BulkResponse bulkResponse = openSearchService.requestBulkIndexing(itemResponseList);
 
-		BulkResponse bulkResponse = openSearchService.requestBulkIndexing(consumedItemResponseList);
-
-		List<IndexedItemRequest> indexedItemRequestList = bulkResponse.items().stream().map(IndexedItemRequest::new).toList();
-		for (IndexedItemRequest indexedItemRequest : indexedItemRequestList) {
-			indexedItemService.save(indexedItemRequest);
+		ZonedDateTime utcNow = ZonedDateTime.now(ZoneId.of("UTC"));
+		for (int i = 0; i < itemResponseList.size(); ++i) {
+			itemService.update(itemResponseList.get(i).getId(), bulkResponse.items().get(i), utcNow);
 		}
-
-		for (ConsumedItemResponse consumedItemResponse : consumedItemResponseList){
-			consumedItemService.updateIndexingStatus(consumedItemResponse, IndexingState.COMPLETED);
-		}
-
-		log.info("[ Complete bulk indexing ]");
+		log.info("[ Indexing complete! ]");
 	}
 }

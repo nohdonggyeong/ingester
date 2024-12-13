@@ -7,14 +7,14 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
-import me.donggyeong.indexer.entity.ConsumedItem;
+import me.donggyeong.indexer.entity.Item;
 import me.donggyeong.indexer.enums.Action;
 
 @NoArgsConstructor
 @AllArgsConstructor
 @Getter
 @ToString
-public class ConsumedItemRequest {
+public class ItemRequest {
 	@NotNull(message = "'action' is required")
 	private Action action;
 
@@ -27,8 +27,8 @@ public class ConsumedItemRequest {
 	@NotNull(message = "'docBody' is required")
 	private Map<String, Object> docBody;
 
-	public ConsumedItem toEntity() {
-		return ConsumedItem.builder()
+	public Item toEntity() {
+		return Item.builder()
 			.action(this.action)
 			.target(this.target)
 			.docId(this.docId)

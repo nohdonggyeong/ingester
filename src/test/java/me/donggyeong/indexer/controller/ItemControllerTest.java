@@ -16,31 +16,31 @@ import org.springframework.web.util.UriComponentsBuilder;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-import me.donggyeong.indexer.dto.ConsumedItemRequest;
-import me.donggyeong.indexer.dto.ConsumedItemResponse;
+import me.donggyeong.indexer.dto.ItemRequest;
+import me.donggyeong.indexer.dto.ItemResponse;
 import me.donggyeong.indexer.enums.Action;
-import me.donggyeong.indexer.service.ConsumedItemService;
+import me.donggyeong.indexer.service.ItemService;
 
-@WebMvcTest(ConsumedItemController.class)
-class ConsumedItemControllerTest {
+@WebMvcTest(ItemController.class)
+class ItemControllerTest {
 	@Autowired
 	private MockMvc mockMvc;
 
 	@MockBean
-	private ConsumedItemService consumedItemService;
+	private ItemService itemService;
 
 	@Autowired
 	private ObjectMapper objectMapper;
 
-	private static final String API_BASE_PATH = "/api/v1/consumed-item";
+	private static final String API_BASE_PATH = "/api/v1/item";
 	private static final String JSON_ROOT_PATH = "$";
 	private static final String JSON_FIRST_ELEMENT_PATH = "$[0]";
 
 	@Test
 	void save() throws Exception {
 		// given
-		when(consumedItemService.save(any(ConsumedItemRequest.class))).thenReturn(mock(ConsumedItemResponse.class));
-		ConsumedItemRequest consumedItemRequest = new ConsumedItemRequest(
+		when(itemService.save(any(ItemRequest.class))).thenReturn(mock(ItemResponse.class));
+		ItemRequest itemRequest = new ItemRequest(
 			Action.CREATE,
 			"blog",
 			"1",
@@ -51,11 +51,11 @@ class ConsumedItemControllerTest {
 		mockMvc.perform(
 			post(UriComponentsBuilder.fromPath(API_BASE_PATH).toUriString())
 				.contentType(MediaType.APPLICATION_JSON)
-				.content(objectMapper.writeValueAsString(consumedItemRequest))
+				.content(objectMapper.writeValueAsString(itemRequest))
 		)
 		// then
 			.andExpect(status().isCreated())
 			.andExpect(jsonPath(JSON_ROOT_PATH).isNotEmpty());
-		verify(consumedItemService, times(1)).save(any(ConsumedItemRequest.class));
+		verify(itemService, times(1)).save(any(ItemRequest.class));
 	}
 }

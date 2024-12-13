@@ -28,7 +28,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import me.donggyeong.indexer.dto.ConsumedItemResponse;
+import me.donggyeong.indexer.dto.ItemResponse;
 import me.donggyeong.indexer.enums.ErrorCode;
 import me.donggyeong.indexer.exception.CustomException;
 
@@ -91,21 +91,21 @@ public class OpenSearchServiceImpl implements OpenSearchService{
 
 	@Override
 	@Transactional
-	public BulkResponse requestBulkIndexing(List<ConsumedItemResponse> consumedItemResponseList) {
+	public BulkResponse requestBulkIndexing(List<ItemResponse> itemResponseList) {
 		try {
 			List<BulkOperation> bulkOperationList = new ArrayList<>();
 
-			for (ConsumedItemResponse consumedItemResponse : consumedItemResponseList) {
-				String target = consumedItemResponse.getTarget();
+			for (ItemResponse itemResponse : itemResponseList) {
+				String target = itemResponse.getTarget();
 				String aliasName = "alias_for_" + target;
 
-				switch (consumedItemResponse.getAction()) {
+				switch (itemResponse.getAction()) {
 					case INDEX:
 						bulkOperationList.add(new BulkOperation.Builder().index(
 							IndexOperation.of(io -> io
 								.index(aliasName)
-								.id(String.valueOf(consumedItemResponse.getDocId()))
-								.document(consumedItemResponse.getDocBody())
+								.id(String.valueOf(itemResponse.getDocId()))
+								.document(itemResponse.getDocBody())
 							)
 						).build());
 						break;
@@ -113,8 +113,8 @@ public class OpenSearchServiceImpl implements OpenSearchService{
 						bulkOperationList.add(new BulkOperation.Builder().create(
 							CreateOperation.of(io -> io
 								.index(aliasName)
-								.id(String.valueOf(consumedItemResponse.getDocId()))
-								.document(consumedItemResponse.getDocBody())
+								.id(String.valueOf(itemResponse.getDocId()))
+								.document(itemResponse.getDocBody())
 							)
 						).build());
 						break;
@@ -122,8 +122,8 @@ public class OpenSearchServiceImpl implements OpenSearchService{
 						bulkOperationList.add(new BulkOperation.Builder().update(
 							UpdateOperation.of(io -> io
 								.index(aliasName)
-								.id(String.valueOf(consumedItemResponse.getDocId()))
-								.document(consumedItemResponse.getDocBody())
+								.id(String.valueOf(itemResponse.getDocId()))
+								.document(itemResponse.getDocBody())
 							)
 						).build());
 						break;
@@ -131,7 +131,7 @@ public class OpenSearchServiceImpl implements OpenSearchService{
 						bulkOperationList.add(new BulkOperation.Builder().delete(
 							DeleteOperation.of(io -> io
 								.index(aliasName)
-								.id(String.valueOf(consumedItemResponse.getDocId()))
+								.id(String.valueOf(itemResponse.getDocId()))
 							)
 						).build());
 						break;

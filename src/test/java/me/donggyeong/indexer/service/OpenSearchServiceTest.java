@@ -19,9 +19,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
 import lombok.extern.slf4j.Slf4j;
-import me.donggyeong.indexer.dto.ConsumedItemResponse;
+import me.donggyeong.indexer.dto.ItemResponse;
 import me.donggyeong.indexer.enums.Action;
-import me.donggyeong.indexer.enums.IndexingState;
 
 @SpringBootTest
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
@@ -52,15 +51,15 @@ class OpenSearchServiceTest {
 	@Test
 	void requestBulkIndexing() {
 		// Given
-		List<ConsumedItemResponse> consumedItemResponseList = new ArrayList<>();
+		List<ItemResponse> itemResponseList = new ArrayList<>();
 
 		// 인덱싱할 문서 추가
 		Map<String, Object> indexDocumentBody = new HashMap<>();
 		indexDocumentBody.put("category", "test-index-category");
 		indexDocumentBody.put("title", "test-index-title");
 		indexDocumentBody.put("description", "test-index-description");
-		consumedItemResponseList.add(
-			new ConsumedItemResponse(
+		itemResponseList.add(
+			new ItemResponse(
 				1L,
 				Action.INDEX,
 				TARGET,
@@ -76,8 +75,8 @@ class OpenSearchServiceTest {
 		createDocumentBody.put("category", "test-create-category");
 		createDocumentBody.put("title", "test-create-title");
 		createDocumentBody.put("description", "test-create-description");
-		consumedItemResponseList.add(
-			new ConsumedItemResponse(
+		itemResponseList.add(
+			new ItemResponse(
 				2L,
 				Action.CREATE,
 				TARGET,
@@ -93,8 +92,8 @@ class OpenSearchServiceTest {
 		updateDocumentBody.put("category", "test-update-category");
 		updateDocumentBody.put("title", "test-update-title");
 		updateDocumentBody.put("description", "test-update-description");
-		consumedItemResponseList.add(
-			new ConsumedItemResponse(
+		itemResponseList.add(
+			new ItemResponse(
 				3L,
 				Action.UPDATE,
 				TARGET,
@@ -106,8 +105,8 @@ class OpenSearchServiceTest {
 		);
 
 		// 삭제할 문서 추가
-		consumedItemResponseList.add(
-			new ConsumedItemResponse(
+		itemResponseList.add(
+			new ItemResponse(
 				4L,
 				Action.DELETE,
 				TARGET,
@@ -119,12 +118,12 @@ class OpenSearchServiceTest {
 		);
 
 		// When
-		BulkResponse bulkResponse = openSearchService.requestBulkIndexing(consumedItemResponseList);
+		BulkResponse bulkResponse = openSearchService.requestBulkIndexing(itemResponseList);
 
 		// Then
 		assertAll(
 			() -> assertNotNull(bulkResponse),
-			() -> assertEquals(consumedItemResponseList.size(), bulkResponse.items().size()),
+			() -> assertEquals(itemResponseList.size(), bulkResponse.items().size()),
 			() -> assertTrue(bulkResponse.items().stream().allMatch(item -> item.error() == null)),
 			() -> log.debug("Bulk operation completed successfully with response: {}", bulkResponse)
 		);
