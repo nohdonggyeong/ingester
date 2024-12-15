@@ -25,6 +25,8 @@ import org.opensearch.client.opensearch.indices.DeleteIndexRequest;
 import org.opensearch.client.opensearch.indices.DeleteIndexResponse;
 import org.opensearch.client.opensearch.indices.ExistsRequest;
 import org.opensearch.client.transport.endpoints.BooleanResponse;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -42,7 +44,6 @@ import me.donggyeong.indexer.exception.CustomException;
 public class OpenSearchServiceImpl implements OpenSearchService{
 	private final OpenSearchClient openSearchClient;
 
-	private static final String SORT_BY_INDEX = "index";
 	private static final String PREFIX_INDEX = "index_for_";
 	private static final String PREFIX_ALIAS = "alias_for_";
 	private static final String PREFIX_DOT = ".";
@@ -50,6 +51,7 @@ public class OpenSearchServiceImpl implements OpenSearchService{
 
 	@Override
 	@Transactional
+	@CacheEvict(value = "aliasesCache", allEntries = true)
 	public CreateIndexResponse createIndexWithAlias(String target) {
 		try {
 			CreateIndexRequest createIndexRequest = new Builder()
@@ -152,9 +154,10 @@ public class OpenSearchServiceImpl implements OpenSearchService{
 
 	@Override
 	@Transactional(readOnly = true)
+	@Cacheable(value = "aliasesCache", unless = "#result.isEmpty()")
 	public List<String> findAllAliases() {
 		try {
-			AliasesRequest aliasesRequest = new AliasesRequest.Builder().sort(SORT_BY_INDEX).build();
+			AliasesRequest aliasesRequest = new AliasesRequest.Builder().sort("index").build();
 			AliasesResponse aliasesResponse = openSearchClient.cat().aliases(aliasesRequest);
 			return aliasesResponse.valueBody().stream()
 				.map(AliasesRecord::alias)
@@ -169,6 +172,7 @@ public class OpenSearchServiceImpl implements OpenSearchService{
 
 	@Override
 	@Transactional
+	@CacheEvict(value = "aliasesCache", allEntries = true)
 	public DeleteIndexResponse deleteIndex(String target) {
 		try {
 			DeleteIndexRequest deleteIndexRequest = new DeleteIndexRequest.Builder().index(target).build();

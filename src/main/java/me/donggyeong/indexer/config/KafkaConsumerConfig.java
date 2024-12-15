@@ -16,8 +16,8 @@ import org.springframework.kafka.support.serializer.JsonDeserializer;
 
 import me.donggyeong.indexer.dto.ItemRequest;
 
-@EnableKafka
 @Configuration
+@EnableKafka
 public class KafkaConsumerConfig {
 	@Value("${spring.kafka.bootstrap-servers}")
 	private String bootstrapAddress;
