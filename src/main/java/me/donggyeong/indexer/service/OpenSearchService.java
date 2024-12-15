@@ -11,7 +11,7 @@ import org.opensearch.client.transport.endpoints.BooleanResponse;
 import me.donggyeong.indexer.dto.ItemResponse;
 
 public interface OpenSearchService {
-	CreateIndexResponse createIndex(String target);
+	CreateIndexResponse createIndexWithAlias(String target);
 	BooleanResponse checkIndexExists(String index);
 	DeleteIndexResponse deleteIndex(String target);
 	AliasesResponse findAllAliases();

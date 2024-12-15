@@ -3,8 +3,6 @@ package me.donggyeong.indexer.dto;
 import java.time.ZonedDateTime;
 import java.util.Map;
 
-import org.opensearch.client.opensearch.core.bulk.BulkResponseItem;
-
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.ToString;

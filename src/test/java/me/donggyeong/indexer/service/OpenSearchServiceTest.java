@@ -33,9 +33,9 @@ class OpenSearchServiceTest {
 
 	@Order(1)
 	@Test
-	void createIndex() {
+	void createIndexWithAlias() {
 		// Given & When
-		CreateIndexResponse createIndexResponse = openSearchService.createIndex(TARGET);
+		CreateIndexResponse createIndexResponse = openSearchService.createIndexWithAlias(TARGET);
 		log.debug("createIndexResponse.index : [{}], createIndexResponse.acknowledged : [{}]"
 			, createIndexResponse.index(), createIndexResponse.acknowledged());
 
@@ -66,7 +66,11 @@ class OpenSearchServiceTest {
 				"1",
 				indexDocumentBody,
 				null,
-				IndexingState.PENDING
+				null,
+				null,
+				null,
+				null,
+				null
 			)
 		);
 
@@ -83,7 +87,11 @@ class OpenSearchServiceTest {
 				"2",
 				createDocumentBody,
 				null,
-				IndexingState.PENDING
+				null,
+				null,
+				null,
+				null,
+				null
 			)
 		);
 
@@ -100,7 +108,11 @@ class OpenSearchServiceTest {
 				"1",
 				updateDocumentBody,
 				null,
-				IndexingState.PENDING
+				null,
+				null,
+				null,
+				null,
+				null
 			)
 		);
 
@@ -113,7 +125,11 @@ class OpenSearchServiceTest {
 				"2",
 				null,
 				null,
-				IndexingState.PENDING
+				null,
+				null,
+				null,
+				null,
+				null
 			)
 		);
 

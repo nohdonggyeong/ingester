@@ -24,7 +24,7 @@ public class ItemController {
 	@PostMapping
 	@Deprecated(since = "v1", forRemoval = true)
 	public ResponseEntity<ItemResponse> save(@Valid @RequestBody ItemRequest itemRequest) {
-		log.info("[ Requested item ]: {}", itemRequest.toString());
+		log.info("[ Requested ]: {}", itemRequest.toString());
 		ItemResponse itemResponse = itemService.save(itemRequest);
 		return ResponseEntity.status(HttpStatus.CREATED).body(itemResponse);
 	}

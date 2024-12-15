@@ -39,13 +39,16 @@ import me.donggyeong.indexer.exception.CustomException;
 public class OpenSearchServiceImpl implements OpenSearchService{
 	private final OpenSearchClient openSearchClient;
 
+	private static final String INDEX_PREFIX = "index_for_";
+	private static final String ALIAS_PREFIX = "alias_for_";
+
 	@Override
 	@Transactional
-	public CreateIndexResponse createIndex(String target) {
+	public CreateIndexResponse createIndexWithAlias(String target) {
 		try {
 			CreateIndexRequest createIndexRequest = new Builder()
-				.index("index_for_" + target)
-				.aliases("alias_for_" + target, new Alias.Builder()
+				.index(INDEX_PREFIX + target)
+				.aliases(ALIAS_PREFIX + target, new Alias.Builder()
 					.isWriteIndex(true)
 					.build())
 				.build();
@@ -97,7 +100,7 @@ public class OpenSearchServiceImpl implements OpenSearchService{
 
 			for (ItemResponse itemResponse : itemResponseList) {
 				String target = itemResponse.getTarget();
-				String aliasName = "alias_for_" + target;
+				String aliasName = ALIAS_PREFIX + target;
 
 				switch (itemResponse.getAction()) {
 					case INDEX:
@@ -136,8 +139,7 @@ public class OpenSearchServiceImpl implements OpenSearchService{
 						).build());
 						break;
 					default:
-						log.error("This action is not supported");
-						break;
+						throw new CustomException(ErrorCode.ACTION_NOT_SUPPORTED);
 				}
 			}
 
@@ -149,7 +151,7 @@ public class OpenSearchServiceImpl implements OpenSearchService{
 
 			bulkResponse.items().forEach(item -> {
 				if (item.error() != null) {
-					log.error("Error processing item with action={}, index={}, docId={}, error={}", item.operationType().jsonValue(), item.index(), item.id(), item.error());
+					log.error("[ Error ] with {action={}, index={}, docId={}, error={}}", item.operationType().jsonValue(), item.index(), item.id(), item.error());
 				}
 			});
 
