@@ -3,15 +3,15 @@ package me.donggyeong.indexer.dto;
 import java.util.Map;
 
 import jakarta.validation.constraints.NotNull;
-import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 import lombok.ToString;
 import me.donggyeong.indexer.entity.Item;
 import me.donggyeong.indexer.enums.Action;
 
 @NoArgsConstructor
-@AllArgsConstructor
+@Setter
 @Getter
 @ToString
 public class ItemRequest {
