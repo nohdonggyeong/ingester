@@ -19,7 +19,7 @@ public class KafkaConsumerService {
 
 	@KafkaListener(topics = "${spring.kafka.template.default-topic}", groupId = "${spring.kafka.consumer.group-id}")
 	public void consume(@Payload @Valid ItemRequest message, @Headers MessageHeaders messageHeaders) {
-		log.info("[ Received ]: {}", message.toString());
+		log.info("[ Received ] {}", message.toString());
 		itemService.save(message);
 	}
 }

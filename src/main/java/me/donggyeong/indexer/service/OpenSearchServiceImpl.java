@@ -3,11 +3,13 @@ package me.donggyeong.indexer.service;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 import org.opensearch.client.opensearch.OpenSearchClient;
 import org.opensearch.client.opensearch._types.Refresh;
 import org.opensearch.client.opensearch.cat.AliasesRequest;
 import org.opensearch.client.opensearch.cat.AliasesResponse;
+import org.opensearch.client.opensearch.cat.aliases.AliasesRecord;
 import org.opensearch.client.opensearch.core.BulkRequest;
 import org.opensearch.client.opensearch.core.BulkResponse;
 import org.opensearch.client.opensearch.core.bulk.BulkOperation;
@@ -29,6 +31,7 @@ import org.springframework.transaction.annotation.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import me.donggyeong.indexer.dto.ItemResponse;
+import me.donggyeong.indexer.enums.Action;
 import me.donggyeong.indexer.enums.ErrorCode;
 import me.donggyeong.indexer.exception.CustomException;
 
@@ -39,54 +42,24 @@ import me.donggyeong.indexer.exception.CustomException;
 public class OpenSearchServiceImpl implements OpenSearchService{
 	private final OpenSearchClient openSearchClient;
 
-	private static final String INDEX_PREFIX = "index_for_";
-	private static final String ALIAS_PREFIX = "alias_for_";
+	private static final String SORT_BY_INDEX = "index";
+	private static final String PREFIX_INDEX = "index_for_";
+	private static final String PREFIX_ALIAS = "alias_for_";
+	private static final String PREFIX_DOT = ".";
+	private static final String PREFIX_SECURITY = "security-";
 
 	@Override
 	@Transactional
 	public CreateIndexResponse createIndexWithAlias(String target) {
 		try {
 			CreateIndexRequest createIndexRequest = new Builder()
-				.index(INDEX_PREFIX + target)
-				.aliases(ALIAS_PREFIX + target, new Alias.Builder()
+				.index(PREFIX_INDEX + target)
+				.aliases(PREFIX_ALIAS + target, new Alias.Builder()
 					.isWriteIndex(true)
 					.build())
 				.build();
 
 			return openSearchClient.indices().create(createIndexRequest);
-		} catch (IOException e) {
-			throw new CustomException(ErrorCode.OPENSEARCH_OPERATION_FAILED);
-		}
-	}
-
-	@Override
-	@Transactional(readOnly = true)
-	public BooleanResponse checkIndexExists(String index) {
-		try {
-			ExistsRequest existsRequest = ExistsRequest.of(r -> r.index(index));
-			return openSearchClient.indices().exists(existsRequest);
-		} catch (IOException e) {
-			throw new CustomException(ErrorCode.OPENSEARCH_OPERATION_FAILED);
-		}
-	}
-
-	@Override
-	@Transactional
-	public DeleteIndexResponse deleteIndex(String target) {
-		try {
-			DeleteIndexRequest deleteIndexRequest = new DeleteIndexRequest.Builder().index(target).build();
-			return openSearchClient.indices().delete(deleteIndexRequest);
-		} catch (IOException e) {
-			throw new CustomException(ErrorCode.OPENSEARCH_OPERATION_FAILED);
-		}
-	}
-
-	@Override
-	@Transactional(readOnly = true)
-	public AliasesResponse findAllAliases() {
-		try {
-			AliasesRequest aliasesRequest = new AliasesRequest.Builder().sort("index").build();
-			return openSearchClient.cat().aliases(aliasesRequest);
 		} catch (IOException e) {
 			throw new CustomException(ErrorCode.OPENSEARCH_OPERATION_FAILED);
 		}
@@ -100,7 +73,12 @@ public class OpenSearchServiceImpl implements OpenSearchService{
 
 			for (ItemResponse itemResponse : itemResponseList) {
 				String target = itemResponse.getTarget();
-				String aliasName = ALIAS_PREFIX + target;
+				String aliasName = PREFIX_ALIAS + target;
+
+				List<String> existingAliases = findAllAliases();
+				if (!existingAliases.contains(aliasName)) {
+					createIndexWithAlias(target);
+				}
 
 				switch (itemResponse.getAction()) {
 					case INDEX:
@@ -151,11 +129,50 @@ public class OpenSearchServiceImpl implements OpenSearchService{
 
 			bulkResponse.items().forEach(item -> {
 				if (item.error() != null) {
-					log.error("[ Error ] with {action={}, index={}, docId={}, error={}}", item.operationType().jsonValue(), item.index(), item.id(), item.error());
+					log.error("[ Error ] with {action={}, index={}, docId={}, error={}}", Action.of(item.operationType().jsonValue()), item.index(), item.id(), item.error().type());
 				}
 			});
 
 			return bulkResponse;
+		} catch (IOException e) {
+			throw new CustomException(ErrorCode.OPENSEARCH_OPERATION_FAILED);
+		}
+	}
+
+	@Override
+	@Transactional(readOnly = true)
+	public BooleanResponse checkIndexExists(String index) {
+		try {
+			ExistsRequest existsRequest = ExistsRequest.of(r -> r.index(index));
+			return openSearchClient.indices().exists(existsRequest);
+		} catch (IOException e) {
+			throw new CustomException(ErrorCode.OPENSEARCH_OPERATION_FAILED);
+		}
+	}
+
+	@Override
+	@Transactional(readOnly = true)
+	public List<String> findAllAliases() {
+		try {
+			AliasesRequest aliasesRequest = new AliasesRequest.Builder().sort(SORT_BY_INDEX).build();
+			AliasesResponse aliasesResponse = openSearchClient.cat().aliases(aliasesRequest);
+			return aliasesResponse.valueBody().stream()
+				.map(AliasesRecord::alias)
+				.filter(Objects::nonNull)
+				.filter(alias -> !alias.startsWith(PREFIX_DOT) && !alias.startsWith(PREFIX_SECURITY))
+				.filter(alias -> alias.startsWith(PREFIX_ALIAS))
+				.toList();
+		} catch (IOException e) {
+			throw new CustomException(ErrorCode.OPENSEARCH_OPERATION_FAILED);
+		}
+	}
+
+	@Override
+	@Transactional
+	public DeleteIndexResponse deleteIndex(String target) {
+		try {
+			DeleteIndexRequest deleteIndexRequest = new DeleteIndexRequest.Builder().index(target).build();
+			return openSearchClient.indices().delete(deleteIndexRequest);
 		} catch (IOException e) {
 			throw new CustomException(ErrorCode.OPENSEARCH_OPERATION_FAILED);
 		}
