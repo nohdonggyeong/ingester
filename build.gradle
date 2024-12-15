@@ -62,6 +62,9 @@ dependencies {
 
 	// cache
 	implementation 'org.springframework.boot:spring-boot-starter-cache'
+
+	// jasypt
+	implementation 'com.github.ulisesbocchio:jasypt-spring-boot-starter:3.0.5'
 }
 
 tasks.named('test') {

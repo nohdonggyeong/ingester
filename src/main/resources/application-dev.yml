@@ -34,9 +34,15 @@ spring:
 opensearch:
   ssl:
     trust-store: /Users/donggyeong/develop/now/opensearch/files/cert/files/opensearch-truststore # /full/path/to/keystore
-    trust-store-password: IndexerPassword12#  # password-to-keystore
+    trust-store-password: ENC(Qrr+3QFSYLCHrmkJ+9mQmJAHPNZPCtXGOTv9G95gTQI=)  # password-to-keystore
   host: localhost
   port: 9200
   scheme: https
   username: admin
-  password: IndexerPassword12#
+  password: ENC(U382/u6ngbs9A5TFOSeqAI80a1rIWi0hXh309CnGAg4=)
+
+# jasypt
+jasypt:
+  encryptor:
+    algorithm: PBEWithMD5AndDES
+    password: JasyptPassword12#

@@ -1,4 +1,4 @@
-# java -jar your_application.jar --spring.profiles.active=prod
+# java -jar your_application.jar --spring.profiles.active=prod --jasypt.encryptor.algorithm=jasypt_algorithm --jasypt.encryptor.password=jasypt_password
 
 # port
 server:
@@ -15,7 +15,7 @@ spring:
     url: jdbc:postgresql://localhost:5432/central_storage
     driver-class-name: org.postgresql.Driver
     username: myuser
-    password: mypassword
+    password: ENC(Bbp2Y1Enmlv46/oT+NwjMfE/pbBxrOfk)
   jpa:
     database-platform: org.hibernate.dialect.PostgreSQLDialect
     hibernate:
@@ -33,9 +33,9 @@ spring:
 opensearch:
   ssl:
     trust-store: /Users/donggyeong/develop/now/opensearch/files/cert/files/opensearch-truststore # /full/path/to/keystore
-    trust-store-password: IndexerPassword12#  # password-to-keystore
+    trust-store-password: ENC(Xf5FNk1D0jVn8prlZcTcAMAN74zz2vTRtqqZmSrshOI=)  # password-to-keystore
   host: localhost
   port: 9200
   scheme: https
   username: admin
-  password: IndexerPassword12#
+  password: ENC(ux86F8IsasDkkE14K6zQk18L64gqR8gWD1QEyXGN7Lg=)
