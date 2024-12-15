@@ -4,8 +4,6 @@ import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
-import java.util.Map;
-
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
@@ -20,6 +18,7 @@ import me.donggyeong.indexer.dto.ItemRequest;
 import me.donggyeong.indexer.dto.ItemResponse;
 import me.donggyeong.indexer.enums.Action;
 import me.donggyeong.indexer.service.ItemService;
+import me.donggyeong.indexer.utils.TestUtils;
 
 @WebMvcTest(ItemController.class)
 class ItemControllerTest {
@@ -33,19 +32,17 @@ class ItemControllerTest {
 	private ObjectMapper objectMapper;
 
 	private static final String API_BASE_PATH = "/api/v1/item";
-	private static final String JSON_ROOT_PATH = "$";
-	private static final String JSON_FIRST_ELEMENT_PATH = "$[0]";
 
 	@Test
-	void save() throws Exception {
+	void testSave() throws Exception {
 		// given
 		when(itemService.save(any(ItemRequest.class))).thenReturn(mock(ItemResponse.class));
-		ItemRequest itemRequest = new ItemRequest(
-			Action.CREATE,
-			"blog",
-			"1",
-			Map.of("category", "test-category", "title", "test-title", "description", "test-description")
-		);
+
+		ItemRequest itemRequest = new ItemRequest();
+		itemRequest.setAction(Action.CREATE);
+		itemRequest.setTarget(TestUtils.TARGET);
+		itemRequest.setDocId(TestUtils.DOC_ID_1);
+		itemRequest.setDocBody(TestUtils.DOC_BODY);
 
 		// when
 		mockMvc.perform(
@@ -55,7 +52,8 @@ class ItemControllerTest {
 		)
 		// then
 			.andExpect(status().isCreated())
-			.andExpect(jsonPath(JSON_ROOT_PATH).isNotEmpty());
+			.andExpect(jsonPath(TestUtils.JSON_ROOT_PATH).isNotEmpty());
+
 		verify(itemService, times(1)).save(any(ItemRequest.class));
 	}
 }

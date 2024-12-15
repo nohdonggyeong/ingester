@@ -35,10 +35,15 @@ public class ItemServiceImpl implements ItemService {
 			.map(ItemResponse::new).toList();
 	}
 
+	@Override
+	@Transactional(readOnly = true)
+	public List<ItemResponse> findAll() {
+		return itemRepository.findAll().stream().map(ItemResponse::new).toList();
+	}
+
 	@Transactional
 	public ItemResponse update(Long id, BulkResponseItem bulkResponseItem, ZonedDateTime utcNow) {
-		Item item = itemRepository.findById(id)
-			.orElseThrow(() -> new CustomException(ErrorCode.ITEM_NOT_FOUND));
+		Item item = itemRepository.findById(id).orElseThrow(() -> new CustomException(ErrorCode.ITEM_NOT_FOUND));
 		item.update(bulkResponseItem.index(), bulkResponseItem.status(), bulkResponseItem.result(),
 			bulkResponseItem.error() != null ? bulkResponseItem.error().type() : null, utcNow);
 		item = itemRepository.save(item);
