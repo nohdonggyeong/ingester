@@ -33,7 +33,7 @@ spring:
 opensearch:
   ssl:
     trust-store: /Users/donggyeong/develop/now/opensearch/files/cert/files/opensearch-truststore # /full/path/to/keystore
-    trust-store-password: ENC(Xf5FNk1D0jVn8prlZcTcAMAN74zz2vTRtqqZmSrshOI=)  # password-to-keystore
+    trust-store-password: ENC(Xf5FNk1D0jVn8prlZcTcAMAN74zz2vTRtqqZmSrshOI=) # password-to-keystore
   host: localhost
   port: 9200
   scheme: https
