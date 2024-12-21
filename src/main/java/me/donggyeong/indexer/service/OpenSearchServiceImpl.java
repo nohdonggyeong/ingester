@@ -9,7 +9,6 @@ import java.util.Objects;
 import org.opensearch.client.opensearch.OpenSearchClient;
 import org.opensearch.client.opensearch._types.Refresh;
 import org.opensearch.client.opensearch._types.mapping.DynamicTemplate;
-import org.opensearch.client.opensearch._types.mapping.IntegerNumberProperty;
 import org.opensearch.client.opensearch._types.mapping.Property;
 import org.opensearch.client.opensearch._types.mapping.TextProperty;
 import org.opensearch.client.opensearch._types.mapping.TypeMapping;
@@ -96,7 +95,7 @@ public class OpenSearchServiceImpl implements OpenSearchService{
 
 			return openSearchClient.indices().create(createIndexRequest);
 		} catch (IOException e) {
-			throw new CustomException(ErrorCode.OPENSEARCH_OPERATION_FAILED);
+			throw new CustomException(ErrorCode.OPENSEARCH_CREATE_INDEX_OPERATION_FAILED);
 		}
 	}
 
@@ -170,7 +169,7 @@ public class OpenSearchServiceImpl implements OpenSearchService{
 
 			return bulkResponse;
 		} catch (IOException e) {
-			throw new CustomException(ErrorCode.OPENSEARCH_OPERATION_FAILED);
+			throw new CustomException(ErrorCode.OPENSEARCH_BULK_INDEXING_OPERATION_FAILED);
 		}
 	}
 
@@ -181,7 +180,7 @@ public class OpenSearchServiceImpl implements OpenSearchService{
 			ExistsRequest existsRequest = ExistsRequest.of(r -> r.index(index));
 			return openSearchClient.indices().exists(existsRequest);
 		} catch (IOException e) {
-			throw new CustomException(ErrorCode.OPENSEARCH_OPERATION_FAILED);
+			throw new CustomException(ErrorCode.OPENSEARCH_CHECK_INDEX_EXISTS_OPERATION_FAILED);
 		}
 	}
 
@@ -199,7 +198,7 @@ public class OpenSearchServiceImpl implements OpenSearchService{
 				.filter(alias -> alias.startsWith(PREFIX_ALIAS))
 				.toList();
 		} catch (IOException e) {
-			throw new CustomException(ErrorCode.OPENSEARCH_OPERATION_FAILED);
+			throw new CustomException(ErrorCode.OPENSEARCH_FIND_ALL_ALIASES_OPERATION_FAILED);
 		}
 	}
 
@@ -211,7 +210,7 @@ public class OpenSearchServiceImpl implements OpenSearchService{
 			DeleteIndexRequest deleteIndexRequest = new DeleteIndexRequest.Builder().index(target).build();
 			return openSearchClient.indices().delete(deleteIndexRequest);
 		} catch (IOException e) {
-			throw new CustomException(ErrorCode.OPENSEARCH_OPERATION_FAILED);
+			throw new CustomException(ErrorCode.OPENSEARCH_DELETE_INDEX_OPERATION_FAILED);
 		}
 	}
 }
