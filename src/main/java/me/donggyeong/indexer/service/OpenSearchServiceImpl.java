@@ -3,10 +3,16 @@ package me.donggyeong.indexer.service;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 
 import org.opensearch.client.opensearch.OpenSearchClient;
 import org.opensearch.client.opensearch._types.Refresh;
+import org.opensearch.client.opensearch._types.mapping.DynamicTemplate;
+import org.opensearch.client.opensearch._types.mapping.IntegerNumberProperty;
+import org.opensearch.client.opensearch._types.mapping.Property;
+import org.opensearch.client.opensearch._types.mapping.TextProperty;
+import org.opensearch.client.opensearch._types.mapping.TypeMapping;
 import org.opensearch.client.opensearch.cat.AliasesRequest;
 import org.opensearch.client.opensearch.cat.AliasesResponse;
 import org.opensearch.client.opensearch.cat.aliases.AliasesRecord;
@@ -24,6 +30,7 @@ import org.opensearch.client.opensearch.indices.CreateIndexResponse;
 import org.opensearch.client.opensearch.indices.DeleteIndexRequest;
 import org.opensearch.client.opensearch.indices.DeleteIndexResponse;
 import org.opensearch.client.opensearch.indices.ExistsRequest;
+import org.opensearch.client.opensearch.indices.IndexSettings;
 import org.opensearch.client.transport.endpoints.BooleanResponse;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
@@ -54,11 +61,37 @@ public class OpenSearchServiceImpl implements OpenSearchService{
 	@CacheEvict(value = "aliasesCache", allEntries = true)
 	public CreateIndexResponse createIndexWithAlias(String target) {
 		try {
+			IndexSettings settings = new IndexSettings.Builder()
+				.numberOfShards("3")
+				.numberOfReplicas("1")
+				.build();
+
+			TypeMapping mappings = new TypeMapping.Builder()
+				.dynamicTemplates(
+					List.of(
+						Map.of("nori_text",
+							new DynamicTemplate.Builder()
+								.match("*")
+								.matchMappingType("string")
+								.mapping(new Property.Builder()
+									.text(new TextProperty.Builder()
+										.analyzer("nori")
+										.build())
+									.build())
+								.build()
+						)
+					)
+				)
+				.build();
+
 			CreateIndexRequest createIndexRequest = new Builder()
 				.index(PREFIX_INDEX + target)
 				.aliases(PREFIX_ALIAS + target, new Alias.Builder()
 					.isWriteIndex(true)
-					.build())
+					.build()
+				)
+				.settings(settings)
+				.mappings(mappings)
 				.build();
 
 			return openSearchClient.indices().create(createIndexRequest);
