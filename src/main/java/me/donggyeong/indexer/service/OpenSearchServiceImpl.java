@@ -1,6 +1,9 @@
 package me.donggyeong.indexer.service;
 
 import java.io.IOException;
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -50,10 +53,10 @@ import me.donggyeong.indexer.exception.CustomException;
 public class OpenSearchServiceImpl implements OpenSearchService{
 	private final OpenSearchClient openSearchClient;
 
-	private static final String PREFIX_INDEX = "index_for_";
-	private static final String PREFIX_ALIAS = "alias_for_";
-	private static final String PREFIX_DOT = ".";
-	private static final String PREFIX_SECURITY = "security-";
+	private static final String PREFIX_INDEX = "index_for";
+	private static final String PREFIX_ALIAS = "alias_for";
+	private static final String DELIMITER_UNDERSCORE = "_";
+	private static final String SUFFIX_UTC = "utc";
 
 	@Override
 	@Transactional
@@ -83,9 +86,13 @@ public class OpenSearchServiceImpl implements OpenSearchService{
 				)
 				.build();
 
+			ZonedDateTime utcNow = ZonedDateTime.now(ZoneId.of("UTC"));
+			DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyyMMddHHmmss");
+			String formattedDate = utcNow.format(formatter);
+
 			CreateIndexRequest createIndexRequest = new Builder()
-				.index(PREFIX_INDEX + target)
-				.aliases(PREFIX_ALIAS + target, new Alias.Builder()
+				.index(makeNameWithUnderscore(PREFIX_INDEX, target, formattedDate, SUFFIX_UTC))
+				.aliases(makeNameWithUnderscore(PREFIX_ALIAS, target), new Alias.Builder()
 					.isWriteIndex(true)
 					.build()
 				)
@@ -107,7 +114,7 @@ public class OpenSearchServiceImpl implements OpenSearchService{
 
 			for (ItemResponse itemResponse : itemResponseList) {
 				String target = itemResponse.getTarget();
-				String aliasName = PREFIX_ALIAS + target;
+				String aliasName = makeNameWithUnderscore(PREFIX_ALIAS, target);
 
 				List<String> existingAliases = findAllAliases();
 				if (!existingAliases.contains(aliasName)) {
@@ -194,7 +201,7 @@ public class OpenSearchServiceImpl implements OpenSearchService{
 			return aliasesResponse.valueBody().stream()
 				.map(AliasesRecord::alias)
 				.filter(Objects::nonNull)
-				.filter(alias -> !alias.startsWith(PREFIX_DOT) && !alias.startsWith(PREFIX_SECURITY))
+				// .filter(alias -> !alias.startsWith(".") && !alias.startsWith("security-"))
 				.filter(alias -> alias.startsWith(PREFIX_ALIAS))
 				.toList();
 		} catch (IOException e) {
@@ -212,5 +219,14 @@ public class OpenSearchServiceImpl implements OpenSearchService{
 		} catch (IOException e) {
 			throw new CustomException(ErrorCode.OPENSEARCH_DELETE_INDEX_OPERATION_FAILED);
 		}
+	}
+
+	private String makeNameWithUnderscore(String... args) {
+		StringBuilder sb = new StringBuilder();
+		for (String str : args) {
+			sb.append(str).append(DELIMITER_UNDERSCORE);
+		}
+		sb.deleteCharAt(sb.length() - 1);
+		return sb.toString();
 	}
 }

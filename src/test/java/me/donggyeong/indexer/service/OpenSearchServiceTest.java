@@ -7,10 +7,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.junit.jupiter.api.MethodOrderer;
 import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.TestMethodOrder;
 import org.opensearch.client.opensearch.core.BulkResponse;
 import org.opensearch.client.opensearch.indices.CreateIndexResponse;
 import org.opensearch.client.opensearch.indices.DeleteIndexResponse;
@@ -23,23 +21,19 @@ import me.donggyeong.indexer.enums.Action;
 import me.donggyeong.indexer.utils.TestUtils;
 
 @SpringBootTest
-@TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 @Slf4j
 class OpenSearchServiceTest {
 	@Autowired
 	OpenSearchService openSearchService;
 
-	@Order(1)
 	@Test
 	void createIndexWithAlias() {
 		// Given & When
-		if (openSearchService.checkIndexExists(TestUtils.INDEX).value()) {
-			openSearchService.deleteIndex(TestUtils.INDEX);
-		}
-
 		CreateIndexResponse createIndexResponse = openSearchService.createIndexWithAlias(TestUtils.TARGET);
 		log.debug("createIndexResponse.index : [{}], createIndexResponse.acknowledged : [{}]",
 			createIndexResponse.index(), createIndexResponse.acknowledged());
+
+		openSearchService.deleteIndex(createIndexResponse.index());
 
 		// Then
 		assertAll(
@@ -49,12 +43,15 @@ class OpenSearchServiceTest {
 		);
 	}
 
-	@Order(2)
 	@Test
 	void findAllAliases() {
 		// Given & When
+		CreateIndexResponse createIndexResponse = openSearchService.createIndexWithAlias(TestUtils.TARGET);
+
 		List<String> aliases = openSearchService.findAllAliases();
 		log.debug("aliases : [{}]", aliases);
+
+		openSearchService.deleteIndex(createIndexResponse.index());
 
 		// Then
 		assertAll(
@@ -63,10 +60,11 @@ class OpenSearchServiceTest {
 		);
 	}
 
-	@Order(3)
 	@Test
 	void requestBulkIndexing() {
 		// Given
+		CreateIndexResponse createIndexResponse = openSearchService.createIndexWithAlias(TestUtils.TARGET);
+
 		List<ItemResponse> itemResponseList = new ArrayList<>();
 
 		Map<String, Object> indexDocumentBody = new HashMap<>();
@@ -140,6 +138,8 @@ class OpenSearchServiceTest {
 		// When
 		BulkResponse bulkResponse = openSearchService.requestBulkIndexing(itemResponseList);
 
+		openSearchService.deleteIndex(createIndexResponse.index());
+
 		// Then
 		assertAll(
 			() -> assertNotNull(bulkResponse),
@@ -153,7 +153,9 @@ class OpenSearchServiceTest {
 	@Test
 	void deleteIndex() {
 		// Given & When
-		DeleteIndexResponse deleteIndexResponse = openSearchService.deleteIndex(TestUtils.INDEX);
+		CreateIndexResponse createIndexResponse = openSearchService.createIndexWithAlias(TestUtils.TARGET);
+
+		DeleteIndexResponse deleteIndexResponse = openSearchService.deleteIndex(createIndexResponse.index());
 		log.debug("deleteIndexResponse.acknowledged : [{}]", deleteIndexResponse.acknowledged());
 
 		// Then

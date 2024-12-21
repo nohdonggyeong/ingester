@@ -7,6 +7,8 @@ import java.util.List;
 
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
+import org.opensearch.client.opensearch.indices.CreateIndexResponse;
+import org.opensearch.client.opensearch.indices.DeleteIndexResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.HttpStatus;
@@ -35,17 +37,14 @@ class SchedulingServiceTest {
 	@AfterEach
 	void tearDown() {
 		itemRepository.deleteAll();
-
-		if (openSearchService.checkIndexExists(TestUtils.INDEX).value()) {
-			openSearchService.deleteIndex(TestUtils.INDEX);
-		}
 	}
 
 	@Test
 	void testScheduleIndexing() {
 		// Given
-		List<ItemRequest> itemRequestList = new ArrayList<>();
+		CreateIndexResponse createIndexResponse = openSearchService.createIndexWithAlias(TestUtils.TARGET);
 
+		List<ItemRequest> itemRequestList = new ArrayList<>();
 		for (long i = 1; i <= 3; i++) {
 			ItemRequest itemRequest = new ItemRequest();
 			itemRequest.setAction(Action.CREATE);
@@ -62,6 +61,8 @@ class SchedulingServiceTest {
 
 		// When
 		schedulingService.scheduleIndexing();
+
+		openSearchService.deleteIndex(createIndexResponse.index());
 
 		// Then
 		List<ItemResponse> indexedItemList = itemService.findAll();
